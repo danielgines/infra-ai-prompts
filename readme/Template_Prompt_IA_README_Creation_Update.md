@@ -1,126 +1,128 @@
-# Prompt para Atualização/Criação de README com Fluxos, Serviços e Timers
+# Template_Prompt_IA_README_Creation_Update — Commit‑Ready
 
-## Objetivo
-Atualizar **ou** criar um `README.md` aderente ao estado atual do projeto, preservando a integridade do conteúdo existente, documentando **fluxos de dependências entre scripts** e **serviços/timers agendados**, com foco em uso via **CLI**. Não inventar informações.
-
----
-
-## Instruções de atuação (resumo)
-1. Detecte se já existe `README.md`.
-2. **MODO A (sem README):** crie do zero seguindo a estrutura indicada.
-3. **MODO B (com README):** audite, compare com o projeto e atualize **conservadoramente**.
-4. Em ambos os modos:
-   - Documente **fluxo de dependências** entre scripts.
-   - Documente **serviços/timers agendados** em **tabela**.
-   - Não altere licença, créditos ou avisos legais.
-   - Mantenha o idioma principal do repositório (ou PT-BR se ausente).
+> Instruções para uma IA **gerar um README completo e pronto para commit**, sem TODOs, mantendo a integridade do README existente quando houver, e documentando **fluxos** e **serviços/timers** somente quando comprovados no repositório.
 
 ---
 
-## Regras de integridade e conservadorismo
-- **Não inventar** comandos, flags, endpoints, variáveis de ambiente, roadmaps ou integrações.
-- **Preservar**: licença, créditos/autoria, avisos legais, histórico relevante.
-- **Minimizar mudanças** quando houver README: reescrever apenas o necessário para corrigir desatualizações, lacunas e incoerências.
-- **Marcar TODO** quando houver dúvida factual que não possa ser confirmada nos arquivos do repositório.
-- **Não expor segredos** (tokens, senhas, chaves). Se encontrados em texto, instruir a removê-los e referenciar variáveis de ambiente.
+## 1) Objetivo
+Produzir um `README.md` **final**, coerente com o código **sem suposições**, sem notas internas, sem “TODO”, sem comentários fora do texto do README. O resultado deve poder ser commitado imediatamente.
 
 ---
 
-## Coleta de contexto do projeto (obrigatória antes de escrever)
-Mapeie, a partir do repositório:
-- Linguagem e ferramentas: `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Cargo.toml`, etc.
-- Orquestração/execução: `justfile`, `Makefile`, `docker-compose*.yml`, `Procfile`, `scripts/`, `bin/`.
-- Pontos de entrada CLI (ex.: `cli.py`, `main.py`, shebangs em `*.sh`).
-- Agendamentos/serviços:
-  - **cron**: `crontab`, arquivos em `/etc/cron*` (se presentes no repo), manifestos infra-as-code.
-  - **systemd**: `*.service`, `*.timer` (em `ops/`, `deploy/`, etc.).
-  - **Kubernetes**: `CronJob` (`spec.schedule`) e `Job`.
-  - **CI/CD**: `.github/workflows/*.yml`, GitLab CI, etc.
-  - **Schedulers de app**: Celery Beat, APScheduler, Airflow, Dagster (DAGs/crons).
-- Dependências entre scripts (chamadas internas): varra fontes por execuções de `bash/sh/python/node`, `just`, `make`, `invoke`, etc.
+## 2) Fonte de verdade (usar somente o repositório)
+- Arquivos de configuração e dependências (`pyproject.toml`, `requirements*.txt`, `package.json`, `go.mod`, etc.).
+- Orquestração/execução (`justfile`, `Makefile`, `docker-compose*.yml`, `Procfile`, `scripts/`, `bin/`).
+- Pontos de entrada (`cli.py`, `main.py`, `*.sh` com shebang).
+- Schedulers/serviços **existentes no repo**:  
+  - **systemd** (`*.service`, `*.timer`), **cron** (arquivos cron versionados), **Kubernetes** (`CronJob`, `Job`), **CI/CD** (`.github/workflows/*.yml`, etc.).
+- Código-fonte (para nomes reais de comandos/targets e parâmetros).
+- Arquivos `.env.example` ou variáveis em `settings/config` para listar variáveis de ambiente.
 
-**Dicas técnicas de varredura (ilustrativas, só se aplicáveis ao repo):**
-- Buscar dependências: `grep -RInE "(bash|sh|python|node|just|make)[[:space:]]" .`
-- Alvos Make: analisar alvos e pré-requisitos.
-- Justfile: mapear receitas e dependências implícitas.
-- Python: procurar `if __name__ == '__main__'` e `argparse`/`typer`/`click` para comandos.
+**Proibido** usar informações externas ou inventadas.
 
 ---
 
-## Estrutura mínima do README (ajuste ao tipo de projeto)
-1. **Título**
-2. **Descrição breve** (2–4 linhas, objetiva)
-3. **Índice/Sumário** (se o documento for longo)
+## 3) Modo de execução
+1. **Detectar** se há `README.md`:
+   - **MODO A (criação)**: se não existir.
+   - **MODO B (atualização conservadora)**: se existir.
+2. **Idioma**: manter o idioma do README existente; caso não exista, usar **PT‑BR**.
+3. **Integridade**:
+   - Preservar licença, créditos, avisos legais, histórico específico.
+   - Atualizar somente o necessário para refletir o estado atual.
+   - Não duplicar seções válidas; reorganizar apenas quando melhora a leitura sem perda.
+
+---
+
+## 4) Descoberta (mínima e verificável)
+Execute buscas **apenas** para confirmar evidências no repo:
+- Dependências/CLIs: `grep -RInE "(bash|sh|python|node|just|make)[[:space:]]" .`
+- Makefile/justfile: mapear alvos/receitas e dependências.
+- Python CLI: procurar `argparse|click|typer` e `if __name__ == '__main__'`.
+- Schedulers/serviços: localizar `*.service`, `*.timer`, `CronJob`, Workflows CI.
+
+Se **não** houver evidência versionada de algo, **omita** a seção correspondente (não escrever TODO).
+
+---
+
+## 5) Estrutura do README (seções e regras)
+Inclua **apenas** seções suportadas por evidência:
+
+1. **Título do projeto**
+2. **Descrição breve** (2–4 linhas, objetiva, técnica)
+3. **Sumário** (incluir quando o README for longo)
 4. **Requisitos/Dependências**
-5. **Instalação/Setup**
-6. **Uso (CLI)** – comandos reais com exemplos mínimos executáveis
-7. **Configuração** – variáveis de ambiente, arquivos de config
-8. **Fluxo de Dependências entre Scripts**
-   - Lista ordenada das etapas e dependências.
-   - Opcional: diagrama Mermaid `flowchart` coerente com o código (não inventar).
-9. **Serviços e Timers Agendados**
-   - **Tabela obrigatória** com colunas:
-     - `Nome` | `Tipo` (cron/systemd/cronjob/ci/etc.) | `Arquivo/Local` | `Comando/EntryPoint`
-     - `Agenda` (cron/ISO) | `Timezone` | `Dependências` | `Retries/Backoff` | `Timeout`
-     - `Recursos` (CPU/Mem, se aplicável) | `Logs` (arquivo/comando) | `Alertas/Healthcheck` | `Owner`
-10. **Testes**
-11. **Logs e Observabilidade** (paths/consultas básicas, se houver)
-12. **Estrutura do Projeto** (resumo por diretórios relevantes)
-13. **Notas de Operação/Manutenção** (se houver)
-14. **Licença**
+5. **Instalação/Setup** (comandos reais e executáveis)
+6. **Uso (CLI)** — comandos existentes no código/scripts
+7. **Configuração** — variáveis de ambiente reais; mascarar segredos
+8. **Fluxo de Dependências entre Scripts** *(condicional)*  
+   - Liste a ordem de execução **somente** quando inferível por código/targets.  
+   - Opcional: diagrama Mermaid `flowchart` **apenas se totalmente derivado do repo**.
+9. **Serviços e Timers Agendados** *(condicional)*  
+   - Incluir **somente** quando houver manifests versionados (systemd/cron/K8s/CI).  
+   - Tabela com colunas: `Nome | Tipo | Arquivo/Local | Comando/EntryPoint | Agenda | Timezone | Dependências | Retries/Backoff | Timeout | Logs | Alertas/Healthcheck | Owner`.  
+   - Preencha **apenas** campos confirmáveis nos arquivos.
+10. **Testes** *(condicional)* — se houver estrutura de testes/targets
+11. **Logs e Observabilidade** *(condicional)* — paths/comandos configurados no repo
+12. **Estrutura do Projeto** — resumo de diretórios relevantes (existentes)
+13. **Notas de Operação/Manutenção** *(condicional)* — apenas quando houver instruções versionadas
+14. **Licença** — se arquivo de licença existir
 
-> Se algum item não existir no projeto, omitir a seção ou inserir **TODO** claro e justificável (sem suposições).
-
----
-
-## MODO A — Sem README (criação)
-- Construir o documento seguindo a estrutura mínima.
-- Preencher apenas com dados verificáveis nos arquivos do repo.
-- Nos trechos de fluxo e serviços/timers:
-  - Descrever somente o que estiver confirmado em código/manifestos.
-  - Se parcial/incompleto, listar **TODOs** específicos.
-
-## MODO B — Com README (atualização)
-1. **Auditar** o README atual:
-   - Idioma, público-alvo, seções existentes, coerência com o código.
-   - Pontos sensíveis: licença, créditos, avisos legais, histórico.
-2. **Verificar aderência**:
-   - Comandos de execução/build/test/deploy vigentes (ex.: migração de Make→Just).
-   - Estrutura de diretórios e nomes de serviços.
-   - Fluxos entre scripts e agendamentos presentes no repo.
-3. **Ajustar conservadoramente**:
-   - Atualizar comandos e caminhos quebrados.
-   - Inserir as seções de **Fluxo** e **Serviços/Timers** se ausentes.
-   - Melhorar formatação e clareza **sem** alterar o significado.
-4. **Não remover** seções úteis; se obsoletas, marcar como **Obsoleto** com nota curta.
+**Nunca** incluir placeholders enganosos; quando inevitáveis e padrão (ex.: `<repository-url>`), use-os **com parcimônia**.
 
 ---
 
-## Formato de saída esperado (obrigatório)
-Entregue **nesta ordem**:
-1. **Modo detectado**: `MODO A` ou `MODO B`.
-2. **Resumo da auditoria** (itens objetivos encontrados e lacunas).
-3. **README proposto (conteúdo completo)** em um único bloco Markdown pronto para salvar como `README.md`.
-4. **Resumo das mudanças** (somente se `MODO B`): listar o que foi atualizado/adicionado/removido e o motivo.
-5. **Anexos opcionais** em linha:
-   - Bloco Mermaid `flowchart` do fluxo (se aplicável).
-   - Tabela Markdown de serviços/timers.
+## 6) Regras de redação
+- Sem “TODO”, “NOTE”, “ATENÇÃO” internas para o autor.  
+- Sem comentários metadiscursivos (“modo detectado”, “resumo da auditoria”).  
+- Markdown válido (títulos hierárquicos, listas, blocos de código, links relativos funcionais).  
+- Comandos devem ser **executáveis** conforme arquivos do repo.  
+- Variáveis sensíveis: referencie por nome; **não** expor valores.
 
 ---
 
-## Checklist final (validar antes de entregar)
-- [ ] Idioma consistente; estilo técnico, sem marketing.
-- [ ] Nenhum segredo exposto; variáveis de ambiente documentadas quando necessário.
-- [ ] Comandos e exemplos **executáveis** e coerentes com o repo.
-- [ ] Fluxo de dependências **reflete o código**; sem suposições.
-- [ ] Tabela de serviços/timers completa com colunas exigidas, quando aplicável.
-- [ ] Licença/créditos/avisos **inalterados**.
-- [ ] Links, âncoras, formatação Markdown corretos.
-- [ ] Alterações mínimas quando já havia README.
+## 7) Critérios para **Fluxo** e **Serviços**
+- **Fluxo**: só gerar se a cadeia entre scripts/alvos for clara no código/receitas. Caso parcial, **omitir a seção**.  
+- **Serviços/Timers**: só gerar tabela se houver manifests versionados. Se não houver manifests, **omitir a seção**.
 
 ---
 
-## Observações
-- Priorize CLI e automações; não descreva GUIs salvo evidência no repo.
-- Se o projeto for multilíngue, mantenha o idioma do README original; se inexistente, use PT-BR.
-- Em caso de conflito entre README antigo e código atual, **o código vence**; documente a correção no resumo das mudanças.
+## 8) Validações obrigatórias antes de finalizar
+- [ ] Cada comando existe no repo (script/target/entrypoint).
+- [ ] Cada arquivo/pasta referenciado existe.
+- [ ] Links e âncoras funcionam.
+- [ ] Sem segredos expostos.
+- [ ] Sem TODOs/observações internas.
+- [ ] Texto em PT‑BR (ou idioma original), técnico e objetivo.
+- [ ] Licença/créditos/avisos preservados quando presentes.
+
+---
+
+## 9) **Formato de saída (exigido)**
+**Entregue apenas o conteúdo final do `README.md`**, em um único bloco Markdown, **sem qualquer texto adicional** (sem análise, sem modo detectado, sem resumo).
+
+---
+
+## 10) Heurísticas de inclusão/omissão (decisão rápida)
+- Se **manifesto de serviço/timer** está versionado → **incluir** seção “Serviços e Timers”. Caso contrário → **omitir**.
+- Se **cadeia de execução** entre scripts/alvos é rastreável em código/receitas → **incluir** “Fluxo de Dependências” (com Mermaid opcional). Caso contrário → **omitir**.
+- Se não há testes/CI no repo → **omitir** seção de testes/CI.
+- Se não há `.env.example` nem variáveis mapeadas → **limitar** a “Configuração” ao que for evidente nos arquivos.
+
+---
+
+## 11) Exigências de consistência
+- Usar nomes de spiders/targets/serviços **exatamente** como definidos nos arquivos.  
+- Manter a **nomenclatura** de filas, envs e paths conforme encontrados.  
+- Não criar comandos genéricos que não existam.
+
+---
+
+## 12) Segurança
+- Nunca copiar valores de chaves/senhas encontrados em histórico.  
+- Se encontrar segredo em texto claro no repo, **não** mencione o valor; apenas descreva a variável de ambiente correspondente.
+
+---
+
+## 13) Saída esperada
+Um `README.md` **commit‑ready**, coerente, sem pendências ou comentários, refletindo **exatamente** o estado do repositório.
