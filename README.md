@@ -10,21 +10,20 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 ```text
 .
-├─ commits/
-│  └─ Commit_Instructions.md
-│
-├─ just/
-│  ├─ Makefile_to_Just_Migration_Guideline.markdown
-│  ├─ Just_Script_Best_Practices_Guide.markdown
-│  ├─ Just_Script_Checklist.markdown
-│  └─ Template_Prompt_IA_Just_Script_Generation.markdown
-│
-├─ shell/
-│  ├─ Shell_Script_Best_Practices_Guide.md
-│  ├─ Shell_Script_Checklist.md
-│  └─ Template_Prompt_IA_Shell_Script_Generation.md
-│
-└─ README.md
+├── commits/
+│   └── Commit_Instructions.md
+├── just/
+│   ├── Just_Script_Best_Practices_Guide.md
+│   ├── Just_Script_Checklist.md
+│   ├── Makefile_to_Just_Migration_Guideline.md
+│   └── Template_Prompt_IA_Just_Script_Generation.md
+├── readme/
+│   └── Template_Prompt_IA_README_Creation_Update.md
+├── README.md
+└── shell/
+    ├── Shell_Script_Best_Practices_Guide.md
+    ├── Shell_Script_Checklist.md
+    └── Template_Prompt_IA_Shell_Script_Generation.md
 ```
 
 ### `commits/`
