@@ -11,7 +11,10 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 ```text
 .
 ├── commits/
-│   └── Commit_Instructions.md
+│   ├── Conventional_Commits_Reference.md
+│   ├── First_Commit_Instructions.md
+│   ├── Progress_Commit_Instructions.md
+│   └── History_Rewrite_Instructions.md
 ├── just/
 │   ├── Just_Script_Best_Practices_Guide.md
 │   ├── Just_Script_Checklist.md
@@ -28,8 +31,17 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 ### `commits/`
 
-- **Commit_Instructions.md**  
-  Template de prompt para revisão e padronização de mensagens de commit, com foco em Conventional Commits e fluxo de primeiro commit do projeto.
+- **Conventional_Commits_Reference.md**
+  Base compartilhada com padrões de Conventional Commits. Referência para todos os templates de commit.
+
+- **First_Commit_Instructions.md**
+  Template de prompt para geração de mensagem do primeiro commit do repositório.
+
+- **Progress_Commit_Instructions.md**
+  Template de prompt para análise de mudanças e geração de mensagens de commit durante desenvolvimento ativo (uso mais frequente).
+
+- **History_Rewrite_Instructions.md**
+  Template de prompt para reescrita segura de histórico Git com mensagens padronizadas (uso avançado e raro).
 
 ### `just/`
 
@@ -60,24 +72,30 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 ## Como usar estes arquivos
 
-1. **Escolha a área**  
-   - Mensagens de commit → pasta `commits/`  
-   - Scripts `just` → pasta `just/`  
+1. **Escolha a área**
+   - Mensagens de commit → pasta `commits/`
+   - Scripts `just` → pasta `just/`
    - Scripts Bash → pasta `shell/`
 
-2. **Selecione o tipo de documento**  
-   - `Template_Prompt_...` → texto a ser colado diretamente na IA como prompt principal.  
-   - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.  
+2. **Para commits, escolha o cenário específico:**
+   - **Primeiro commit do repositório** → `First_Commit_Instructions.md`
+   - **Commit durante desenvolvimento** (mais comum) → `Progress_Commit_Instructions.md`
+   - **Reescrita de histórico** (avançado) → `History_Rewrite_Instructions.md`
+   - **Referência de padrões** → `Conventional_Commits_Reference.md`
+
+3. **Para scripts (just/shell), selecione o tipo de documento:**
+   - `Template_Prompt_...` → texto a ser colado diretamente na IA como prompt principal.
+   - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.
    - `...Checklist...` → uso na revisão final do que foi gerado.
 
-3. **Adapte ao contexto do projeto**  
+4. **Adapte ao contexto do projeto**
    - Ajuste nomes de serviços, paths, comandos específicos, ambientes (dev/stage/prod) e políticas internas.
 
-4. **Envie o prompt para a IA**  
+5. **Envie o prompt para a IA**
    - Use o template correspondente, incluindo contexto adicional do seu projeto quando necessário.
 
-5. **Revise antes de aplicar**  
-   - Valide a saída gerada usando a checklist da pasta correspondente.  
+6. **Revise antes de aplicar**
+   - Valide a saída gerada usando a checklist da pasta correspondente (quando aplicável).
    - Só depois aplique o script/mudança em repositórios ou ambientes reais.
 
 ---
