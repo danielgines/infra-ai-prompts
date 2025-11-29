@@ -34,7 +34,11 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 │   └── examples/
 │       └── before_after_docstrings.md
 ├── readme/
-│   └── Template_Prompt_IA_README_Creation_Update.md
+│   ├── README_Standards_Reference.md
+│   ├── New_README_Instructions.md
+│   ├── Update_README_Instructions.md
+│   └── examples/
+│       └── before_after_readme.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -77,6 +81,20 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 - **examples/before_after_docstrings.md**
   Practical examples of transforming poorly documented code into professionally documented code.
 
+### `readme/`
+
+- **README_Standards_Reference.md**
+  Shared base with modern technical documentation standards. Structure of 24 essential sections, badges, formatting, conditional inclusion, and best practices for professional READMEs.
+
+- **New_README_Instructions.md**
+  Prompt template for generating complete README from scratch. Analyzes repository (dependencies, entry points, configuration) and creates evidence-based documentation.
+
+- **Update_README_Instructions.md**
+  Prompt template for updating existing README while preserving valid content (license, authors, context). Audits current state, corrects outdated information, and adds missing sections.
+
+- **examples/before_after_readme.md**
+  Practical examples of README transformations for different project types (no README → complete Scrapy, minimal → enhanced FastAPI, outdated → corrected CLI tool).
+
 ### `just/`
 
 - **Makefile_to_Just_Migration_Guideline.md**
@@ -109,6 +127,7 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 1. **Choose the area**
    - Commit messages → `commits/` folder
    - Python documentation → `python/` folder
+   - README documentation → `readme/` folder
    - Just scripts → `just/` folder
    - Bash scripts → `shell/` folder
 
@@ -125,19 +144,25 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - **View examples** → `examples/before_after_docstrings.md`
    - **Standards reference** → `Python_Docstring_Standards_Reference.md`
 
-4. **For scripts (just/shell), select the document type:**
+4. **For README, choose the scenario:**
+   - **Create README from scratch** → `New_README_Instructions.md`
+   - **Update existing README** → `Update_README_Instructions.md`
+   - **View transformation examples** → `examples/before_after_readme.md`
+   - **Standards reference** → `README_Standards_Reference.md`
+
+5. **For scripts (just/shell), select the document type:**
    - `Template_Prompt_...` → text to be pasted directly into AI as the main prompt.
    - `...Best_Practices_Guide...` → technical reference for how the output should be structured.
    - `...Checklist...` → use in final review of what was generated.
 
-5. **Adapt to project context**
+6. **Adapt to project context**
    - Adjust service names, paths, specific commands, environments (dev/stage/prod), and internal policies.
    - For Python: combine base prompt with preferences file if needed (`cat base.md preferences.md`).
 
-6. **Send the prompt to the AI**
+7. **Send the prompt to the AI**
    - Use the corresponding template, including additional context from your project when necessary.
 
-7. **Review before applying**
+8. **Review before applying**
    - Validate the generated output using the checklist from the corresponding folder (when applicable).
    - Only then apply the script/change to repositories or real environments.
 

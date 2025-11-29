@@ -34,7 +34,11 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 │   └── examples/
 │       └── before_after_docstrings.md
 ├── readme/
-│   └── Template_Prompt_IA_README_Creation_Update.md
+│   ├── README_Standards_Reference.md
+│   ├── New_README_Instructions.md
+│   ├── Update_README_Instructions.md
+│   └── examples/
+│       └── before_after_readme.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -77,6 +81,20 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 - **examples/before_after_docstrings.md**
   Exemplos práticos de transformação de código mal documentado para código com documentação profissional.
 
+### `readme/`
+
+- **README_Standards_Reference.md**
+  Base compartilhada com padrões modernos de documentação técnica. Estrutura de 24 seções essenciais, badges, formatação, inclusão condicional e boas práticas para README profissional.
+
+- **New_README_Instructions.md**
+  Template de prompt para gerar README completo do zero. Analisa repositório (dependências, entry points, configuração) e cria documentação baseada em evidências.
+
+- **Update_README_Instructions.md**
+  Template de prompt para atualizar README existente preservando conteúdo válido (licença, autores, contexto). Audita estado atual, corrige desatualizações e adiciona seções faltantes.
+
+- **examples/before_after_readme.md**
+  Exemplos práticos de transformação de READMEs para diferentes tipos de projeto (sem README → Scrapy completo, mínimo → FastAPI aprimorado, desatualizado → CLI corrigido).
+
 ### `just/`
 
 - **Makefile_to_Just_Migration_Guideline.markdown**  
@@ -109,6 +127,7 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 1. **Escolha a área**
    - Mensagens de commit → pasta `commits/`
    - Documentação Python → pasta `python/`
+   - Documentação README → pasta `readme/`
    - Scripts `just` → pasta `just/`
    - Scripts Bash → pasta `shell/`
 
@@ -125,19 +144,25 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - **Ver exemplos** → `examples/before_after_docstrings.md`
    - **Referência de padrões** → `Python_Docstring_Standards_Reference.md`
 
-4. **Para scripts (just/shell), selecione o tipo de documento:**
+4. **Para README, escolha o cenário:**
+   - **Criar README do zero** → `New_README_Instructions.md`
+   - **Atualizar README existente** → `Update_README_Instructions.md`
+   - **Ver exemplos de transformação** → `examples/before_after_readme.md`
+   - **Referência de padrões** → `README_Standards_Reference.md`
+
+5. **Para scripts (just/shell), selecione o tipo de documento:**
    - `Template_Prompt_...` → texto a ser colado diretamente na IA como prompt principal.
    - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.
    - `...Checklist...` → uso na revisão final do que foi gerado.
 
-5. **Adapte ao contexto do projeto**
+6. **Adapte ao contexto do projeto**
    - Ajuste nomes de serviços, paths, comandos específicos, ambientes (dev/stage/prod) e políticas internas.
    - Para Python: combine prompt base com arquivo de preferências se necessário (`cat base.md preferences.md`).
 
-6. **Envie o prompt para a IA**
+7. **Envie o prompt para a IA**
    - Use o template correspondente, incluindo contexto adicional do seu projeto quando necessário.
 
-7. **Revise antes de aplicar**
+8. **Revise antes de aplicar**
    - Valide a saída gerada usando a checklist da pasta correspondente (quando aplicável).
    - Só depois aplique o script/mudança em repositórios ou ambientes reais.
 
