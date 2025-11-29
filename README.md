@@ -1,8 +1,10 @@
 # Biblioteca de Prompts Técnicos para IA
 
-Repositório com modelos de prompts, guias e checklists voltados para uso com IAs na geração e revisão de conteúdo técnico de infraestrutura: mensagens de commit, scripts just e scripts de shell.
+**[English](README_EN.md)** | **Português**
 
-O objetivo é padronizar o comportamento da IA para produzir saídas consistentes, seguras e alinhadas com boas práticas de DevOps/SRE.
+Repositório com modelos de prompts, guias e checklists voltados para uso com IAs na geração e revisão de conteúdo técnico de infraestrutura: mensagens de commit, scripts just, scripts de shell e documentação Python.
+
+O objetivo é padronizar o comportamento da IA para produzir saídas consistentes, seguras e alinhadas com boas práticas de DevOps/SRE e desenvolvimento Python.
 
 ---
 
@@ -20,6 +22,17 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 │   ├── Just_Script_Checklist.md
 │   ├── Makefile_to_Just_Migration_Guideline.md
 │   └── Template_Prompt_IA_Just_Script_Generation.md
+├── python/
+│   ├── Python_Docstring_Standards_Reference.md
+│   ├── Code_Documentation_Instructions.md
+│   ├── Comment_Cleanup_Instructions.md
+│   ├── preferences/
+│   │   ├── README.md
+│   │   ├── preferences_template.md
+│   │   └── examples/
+│   │       └── daniel_gines_preferences.md
+│   └── examples/
+│       └── before_after_docstrings.md
 ├── readme/
 │   └── Template_Prompt_IA_README_Creation_Update.md
 ├── README.md
@@ -42,6 +55,27 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 - **History_Rewrite_Instructions.md**
   Template de prompt para reescrita segura de histórico Git com mensagens padronizadas (uso avançado e raro).
+
+### `python/`
+
+- **Python_Docstring_Standards_Reference.md**
+  Referência completa de padrões de documentação Python: PEP 257, Google Style, NumPy Style e Sphinx. Base para todos os prompts de documentação Python.
+
+- **Code_Documentation_Instructions.md**
+  Template de prompt para padronizar docstrings em código Python. Suporta análise de projeto completo, módulos ou funções específicas.
+
+- **Comment_Cleanup_Instructions.md**
+  Template de prompt para limpar e melhorar comentários inline em código Python. Remove comentários óbvios, código comentado e melhora comentários essenciais.
+
+- **preferences/**
+  Sistema de preferências personalizáveis para convenções específicas de frameworks (Scrapy, Django, SQLAlchemy, FastAPI, etc.). Permite combinar prompts base com preferências pessoais ou de equipe.
+
+  - **README.md**: Guia completo do sistema de preferências
+  - **preferences_template.md**: Template vazio para copiar e customizar
+  - **examples/daniel_gines_preferences.md**: Exemplo de preferências para Scrapy, SQLAlchemy e Alembic
+
+- **examples/before_after_docstrings.md**
+  Exemplos práticos de transformação de código mal documentado para código com documentação profissional.
 
 ### `just/`
 
@@ -74,6 +108,7 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 1. **Escolha a área**
    - Mensagens de commit → pasta `commits/`
+   - Documentação Python → pasta `python/`
    - Scripts `just` → pasta `just/`
    - Scripts Bash → pasta `shell/`
 
@@ -83,18 +118,26 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - **Reescrita de histórico** (avançado) → `History_Rewrite_Instructions.md`
    - **Referência de padrões** → `Conventional_Commits_Reference.md`
 
-3. **Para scripts (just/shell), selecione o tipo de documento:**
+3. **Para Python, escolha a tarefa:**
+   - **Padronizar docstrings** → `Code_Documentation_Instructions.md`
+   - **Limpar comentários** → `Comment_Cleanup_Instructions.md`
+   - **Adicionar preferências pessoais** → Copie `preferences/preferences_template.md` e customize
+   - **Ver exemplos** → `examples/before_after_docstrings.md`
+   - **Referência de padrões** → `Python_Docstring_Standards_Reference.md`
+
+4. **Para scripts (just/shell), selecione o tipo de documento:**
    - `Template_Prompt_...` → texto a ser colado diretamente na IA como prompt principal.
    - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.
    - `...Checklist...` → uso na revisão final do que foi gerado.
 
-4. **Adapte ao contexto do projeto**
+5. **Adapte ao contexto do projeto**
    - Ajuste nomes de serviços, paths, comandos específicos, ambientes (dev/stage/prod) e políticas internas.
+   - Para Python: combine prompt base com arquivo de preferências se necessário (`cat base.md preferences.md`).
 
-5. **Envie o prompt para a IA**
+6. **Envie o prompt para a IA**
    - Use o template correspondente, incluindo contexto adicional do seu projeto quando necessário.
 
-6. **Revise antes de aplicar**
+7. **Revise antes de aplicar**
    - Valide a saída gerada usando a checklist da pasta correspondente (quando aplicável).
    - Só depois aplique o script/mudança em repositórios ou ambientes reais.
 

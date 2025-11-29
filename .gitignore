@@ -78,3 +78,10 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+# Personal Python preferences (don't commit)
+# Ignore all *_preferences.md files in preferences/ root
+python/preferences/*_preferences.md
+# But keep the template
+!python/preferences/preferences_template.md
+# And keep all files in examples/ subdirectory
+!python/preferences/examples/**
