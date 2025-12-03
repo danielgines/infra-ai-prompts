@@ -39,6 +39,17 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 │   ├── Update_README_Instructions.md
 │   └── examples/
 │       └── before_after_readme.md
+├── sqlalchemy/
+│   ├── SQLAlchemy_Model_Documentation_Standards_Reference.md
+│   ├── Model_Documentation_Instructions.md
+│   ├── Model_Comments_Update_Instructions.md
+│   ├── preferences/
+│   │   ├── README.md
+│   │   ├── preferences_template.md
+│   │   └── examples/
+│   │       └── daniel_gines_preferences.md
+│   └── examples/
+│       └── before_after_model_documentation.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -95,6 +106,27 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 - **examples/before_after_readme.md**
   Exemplos práticos de transformação de READMEs para diferentes tipos de projeto (sem README → Scrapy completo, mínimo → FastAPI aprimorado, desatualizado → CLI corrigido).
 
+### `sqlalchemy/`
+
+- **SQLAlchemy_Model_Documentation_Standards_Reference.md**
+  Base compartilhada com padrões de documentação para modelos SQLAlchemy. Estrutura de docstrings, formato de comments inline, integração com pgModeler, exemplos de dados reais do banco.
+
+- **Model_Documentation_Instructions.md**
+  Template de prompt para documentar modelos SQLAlchemy do zero. Consulta banco de dados para exemplos reais, gera docstrings completas e comments inline compatíveis com pgModeler.
+
+- **Model_Comments_Update_Instructions.md**
+  Template de prompt para atualizar apenas comments inline em modelos existentes. Foco em adicionar exemplos de dados reais consultando o banco, sem modificar código.
+
+- **preferences/**
+  Sistema de preferências customizáveis para convenções específicas de projeto (PostgreSQL, pgModeler, estratégias de migração, soft delete, audit trail, etc.).
+
+  - **README.md**: Guia completo do sistema de preferências
+  - **preferences_template.md**: Template vazio para copiar e customizar
+  - **examples/daniel_gines_preferences.md**: Exemplo de preferências para PostgreSQL, Alembic e pgModeler
+
+- **examples/before_after_model_documentation.md**
+  Exemplos práticos de transformação de modelos mal documentados para modelos com documentação profissional, comments inline e exemplos de dados reais.
+
 ### `just/`
 
 - **Makefile_to_Just_Migration_Guideline.markdown**  
@@ -128,6 +160,7 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - Mensagens de commit → pasta `commits/`
    - Documentação Python → pasta `python/`
    - Documentação README → pasta `readme/`
+   - Modelos SQLAlchemy → pasta `sqlalchemy/`
    - Scripts `just` → pasta `just/`
    - Scripts Bash → pasta `shell/`
 
@@ -150,19 +183,27 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - **Ver exemplos de transformação** → `examples/before_after_readme.md`
    - **Referência de padrões** → `README_Standards_Reference.md`
 
-5. **Para scripts (just/shell), selecione o tipo de documento:**
+5. **Para modelos SQLAlchemy, escolha a tarefa:**
+   - **Documentar modelos do zero** → `Model_Documentation_Instructions.md`
+   - **Atualizar apenas comments** → `Model_Comments_Update_Instructions.md`
+   - **Adicionar preferências de projeto** → Copie `preferences/preferences_template.md` e customize
+   - **Ver exemplos** → `examples/before_after_model_documentation.md`
+   - **Referência de padrões** → `SQLAlchemy_Model_Documentation_Standards_Reference.md`
+
+6. **Para scripts (just/shell), selecione o tipo de documento:**
    - `Template_Prompt_...` → texto a ser colado diretamente na IA como prompt principal.
    - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.
    - `...Checklist...` → uso na revisão final do que foi gerado.
 
-6. **Adapte ao contexto do projeto**
+7. **Adapte ao contexto do projeto**
    - Ajuste nomes de serviços, paths, comandos específicos, ambientes (dev/stage/prod) e políticas internas.
-   - Para Python: combine prompt base com arquivo de preferências se necessário (`cat base.md preferences.md`).
+   - Para Python/SQLAlchemy: combine prompt base com arquivo de preferências se necessário (`cat base.md preferences.md`).
+   - Para SQLAlchemy: forneça DATABASE_URL para consultar dados reais do banco.
 
-7. **Envie o prompt para a IA**
+8. **Envie o prompt para a IA**
    - Use o template correspondente, incluindo contexto adicional do seu projeto quando necessário.
 
-8. **Revise antes de aplicar**
+9. **Revise antes de aplicar**
    - Valide a saída gerada usando a checklist da pasta correspondente (quando aplicável).
    - Só depois aplique o script/mudança em repositórios ou ambientes reais.
 

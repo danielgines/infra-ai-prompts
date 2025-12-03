@@ -39,6 +39,17 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 │   ├── Update_README_Instructions.md
 │   └── examples/
 │       └── before_after_readme.md
+├── sqlalchemy/
+│   ├── SQLAlchemy_Model_Documentation_Standards_Reference.md
+│   ├── Model_Documentation_Instructions.md
+│   ├── Model_Comments_Update_Instructions.md
+│   ├── preferences/
+│   │   ├── README.md
+│   │   ├── preferences_template.md
+│   │   └── examples/
+│   │       └── daniel_gines_preferences.md
+│   └── examples/
+│       └── before_after_model_documentation.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -95,6 +106,27 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 - **examples/before_after_readme.md**
   Practical examples of README transformations for different project types (no README → complete Scrapy, minimal → enhanced FastAPI, outdated → corrected CLI tool).
 
+### `sqlalchemy/`
+
+- **SQLAlchemy_Model_Documentation_Standards_Reference.md**
+  Shared base with SQLAlchemy model documentation standards. Docstring structure, inline comment format, pgModeler integration, real database examples.
+
+- **Model_Documentation_Instructions.md**
+  Prompt template for documenting SQLAlchemy models from scratch. Queries database for real examples, generates complete docstrings and pgModeler-compatible inline comments.
+
+- **Model_Comments_Update_Instructions.md**
+  Prompt template for updating only inline comments on existing models. Focuses on adding real data examples by querying the database, without modifying code.
+
+- **preferences/**
+  Customizable preferences system for project-specific conventions (PostgreSQL, pgModeler, migration strategies, soft delete, audit trail, etc.).
+
+  - **README.md**: Complete guide to the preferences system
+  - **preferences_template.md**: Empty template to copy and customize
+  - **examples/daniel_gines_preferences.md**: Example preferences for PostgreSQL, Alembic, and pgModeler
+
+- **examples/before_after_model_documentation.md**
+  Practical examples of transforming poorly documented models into professionally documented models with inline comments and real data examples.
+
 ### `just/`
 
 - **Makefile_to_Just_Migration_Guideline.md**
@@ -128,6 +160,7 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - Commit messages → `commits/` folder
    - Python documentation → `python/` folder
    - README documentation → `readme/` folder
+   - SQLAlchemy models → `sqlalchemy/` folder
    - Just scripts → `just/` folder
    - Bash scripts → `shell/` folder
 
@@ -150,19 +183,27 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - **View transformation examples** → `examples/before_after_readme.md`
    - **Standards reference** → `README_Standards_Reference.md`
 
-5. **For scripts (just/shell), select the document type:**
+5. **For SQLAlchemy models, choose the task:**
+   - **Document models from scratch** → `Model_Documentation_Instructions.md`
+   - **Update only comments** → `Model_Comments_Update_Instructions.md`
+   - **Add project preferences** → Copy `preferences/preferences_template.md` and customize
+   - **View examples** → `examples/before_after_model_documentation.md`
+   - **Standards reference** → `SQLAlchemy_Model_Documentation_Standards_Reference.md`
+
+6. **For scripts (just/shell), select the document type:**
    - `Template_Prompt_...` → text to be pasted directly into AI as the main prompt.
    - `...Best_Practices_Guide...` → technical reference for how the output should be structured.
    - `...Checklist...` → use in final review of what was generated.
 
-6. **Adapt to project context**
+7. **Adapt to project context**
    - Adjust service names, paths, specific commands, environments (dev/stage/prod), and internal policies.
-   - For Python: combine base prompt with preferences file if needed (`cat base.md preferences.md`).
+   - For Python/SQLAlchemy: combine base prompt with preferences file if needed (`cat base.md preferences.md`).
+   - For SQLAlchemy: provide DATABASE_URL to query real data from database.
 
-7. **Send the prompt to the AI**
+8. **Send the prompt to the AI**
    - Use the corresponding template, including additional context from your project when necessary.
 
-8. **Review before applying**
+9. **Review before applying**
    - Validate the generated output using the checklist from the corresponding folder (when applicable).
    - Only then apply the script/change to repositories or real environments.
 
