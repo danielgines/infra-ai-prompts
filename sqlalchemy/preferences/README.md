@@ -25,6 +25,7 @@ The base prompts provide industry-standard documentation:
 - `SQLAlchemy_Model_Documentation_Standards_Reference.md`: Standard formats
 - `Model_Documentation_Instructions.md`: Documentation generation
 - `Model_Comments_Update_Instructions.md`: Comment updates
+- `Baseline_Migration_Instructions.md`: Baseline migrations for existing databases
 
 ### Preferences Layer
 
@@ -270,6 +271,13 @@ Required sections:
 - All migrations during maintenance window (Sundays 2-4 AM UTC)
 - Large migrations (>1M rows): coordinate with ops team
 - Breaking changes: require 2-phase deployment
+
+### Baseline Migrations
+When adopting Alembic on existing databases:
+- Create baseline migration documenting current schema
+- Use `alembic stamp` (not `upgrade`) on existing databases
+- Document all tables, relationships, and constraints in baseline
+- See: `Baseline_Migration_Instructions.md`
 ```
 
 ### 6. Security Requirements

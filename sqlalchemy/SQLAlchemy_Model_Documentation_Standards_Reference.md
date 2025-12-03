@@ -657,4 +657,94 @@ email = Column(
 
 ---
 
+## Alembic Migrations
+
+### Baseline Migrations for Existing Databases
+
+When adopting Alembic on a project with an existing database schema:
+
+**Purpose**: Create a baseline migration that marks the current database state as the initial version, allowing future schema changes to be tracked without attempting to recreate existing tables.
+
+**When to use**:
+- Legacy database transitioning to migration-based workflow
+- Database created via manual SQL scripts or `Base.metadata.create_all()`
+- Mid-project adoption of Alembic
+- Multiple environments need version control synchronization
+
+**Template**:
+```python
+"""Baseline migration for existing database schema
+
+Revision ID: 001_baseline
+Revises:
+Create Date: 2024-12-03 15:30:00.000000
+
+Context:
+    This baseline migration marks the initial state of an existing legacy
+    database, allowing Alembic to start tracking schema changes from this
+    point forward without attempting to recreate existing structures.
+
+Existing Schema:
+    Included Tables:
+        - users: User accounts and authentication
+        - orders: Customer orders and transactions
+        - products: Product catalog with metadata
+
+    Relationships:
+        - users ← orders (One-to-Many, CASCADE)
+        - categories ← products (One-to-Many, SET NULL)
+
+    Data Volume (as of 2024-12-03):
+        - users: ~1.2M records
+        - orders: ~5.2M records
+
+Purpose:
+    Register current schema without DDL execution, enabling incremental
+    migrations from this point forward.
+
+How to Apply:
+    $ alembic stamp 001_baseline  # For existing databases
+    $ alembic upgrade head         # For empty databases
+"""
+from typing import Sequence, Union
+from alembic import op
+import sqlalchemy as sa
+
+revision: str = '001_baseline'
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+def upgrade() -> None:
+    """Baseline migration - marks existing schema as initial version.
+
+    This migration does NOT make changes to the database.
+    Tables already exist and will not be modified.
+    """
+    pass
+
+def downgrade() -> None:
+    """No downgrade for baseline.
+
+    Cannot revert to state before initial state.
+    """
+    pass
+```
+
+**Best Practices**:
+- ✅ Document all tables, relationships, and constraints in baseline docstring
+- ✅ Use `alembic stamp` on existing databases (not `upgrade`)
+- ✅ Include data volume statistics for context
+- ✅ Test in staging before applying to production
+- ✅ Backup database before any migration operation
+- ❌ Don't include DDL commands in baseline upgrade/downgrade
+- ❌ Don't modify baseline after applying to production
+- ❌ Don't run `upgrade` on databases with existing tables
+
+**Reference**: See `Baseline_Migration_Instructions.md` for detailed guide on creating and applying baseline migrations.
+
+**Template**: See `examples/alembic_baseline_migration_template.py` for complete baseline template.
+
+---
+
 **Philosophy**: Database models are contracts. Documentation should enable any developer to understand data structure, business rules, and usage patterns without reading application code or asking questions.
