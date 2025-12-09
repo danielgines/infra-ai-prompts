@@ -50,6 +50,17 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 │   │       └── daniel_gines_preferences.md
 │   └── examples/
 │       └── before_after_model_documentation.md
+├── workflows/
+│   ├── README.md
+│   ├── QUICK_REFERENCE.md
+│   ├── setup/
+│   │   ├── claude-code.md
+│   │   ├── cursor.md
+│   │   └── generic-ide.md
+│   └── tasks/
+│       ├── commit.md
+│       ├── code-review.md
+│       └── documentation.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -149,8 +160,34 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 - **Shell_Script_Checklist.md**  
   Checklist de validação para scripts de shell antes de uso em ambientes críticos.
 
-- **Template_Prompt_IA_Shell_Script_Generation.md**  
+- **Template_Prompt_IA_Shell_Script_Generation.md**
   Template de prompt para orientar a IA na geração de scripts Bash alinhados ao guia de boas práticas.
+
+### `workflows/`
+
+- **README.md**
+  Documentação completa para integrar padrões infra-ai-prompts com ferramentas de desenvolvimento assistidas por IA (Claude Code, Cursor, IDEs genéricas). Explica filosofia de workflows, comparação de ferramentas, métricas de economia de tempo e orquestração de módulos.
+
+- **QUICK_REFERENCE.md**
+  Consulta rápida de comandos para uso diário de workflows. Comandos de configuração única, comandos diários por ferramenta e resolução de problemas comuns.
+
+- **setup/claude-code.md**
+  Template de workflow para configurar projetos Claude Code. Cria estrutura de diretório `.claude/` com arquivo de memória CLAUDE.md, comandos customizados (`/commit`, `/doc-python`, `/review`) e permissões focadas em segurança.
+
+- **setup/cursor.md**
+  Template de workflow para configurar projetos Cursor IDE. Cria arquivo de configuração `.cursorrules` que aplica automaticamente padrões infra-ai-prompts durante interações em linguagem natural.
+
+- **setup/generic-ide.md**
+  Guia de integração manual para IDEs sem suporte nativo a IA (VS Code, PyCharm, IntelliJ, Vim). Fornece 4 padrões de integração: composição de prompts, snippets de IDE, aliases de shell e git hooks.
+
+- **tasks/commit.md**
+  Workflow de commit inteligente. Analisa mudanças staged, detecta tipo/scope/breaking changes e gera mensagens de commit seguindo especificação Conventional Commits do módulo `@commits/`.
+
+- **tasks/code-review.md**
+  Workflow de revisão técnica de código. Análise de segurança e qualidade em 4 camadas (Segurança, Boas Práticas, Qualidade de Código, Documentação) usando checklists dos módulos `@shell/`, `@python/` ou `@just/`.
+
+- **tasks/documentation.md**
+  Workflow de documentação de código. Padroniza docstrings, melhora comentários inline e aplica preferências específicas de frameworks dos módulos `@python/` ou `@sqlalchemy/`.
 
 ---
 
@@ -163,6 +200,7 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - Modelos SQLAlchemy → pasta `sqlalchemy/`
    - Scripts `just` → pasta `just/`
    - Scripts Bash → pasta `shell/`
+   - Integração com ferramentas IA → pasta `workflows/`
 
 2. **Para commits, escolha o cenário específico:**
    - **Primeiro commit do repositório** → `First_Commit_Instructions.md`
@@ -195,15 +233,22 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - `...Best_Practices_Guide...` → referência técnica de como a saída deve ser estruturada.
    - `...Checklist...` → uso na revisão final do que foi gerado.
 
-7. **Adapte ao contexto do projeto**
+7. **Para workflows, escolha o nível de integração:**
+   - **Configuração única (Claude Code)** → Siga `setup/claude-code.md` para configurar projeto com comandos customizados
+   - **Configuração única (Cursor)** → Siga `setup/cursor.md` para configurar projeto com padrões automáticos
+   - **Integração manual (qualquer IDE)** → Siga `setup/generic-ide.md` para workflows de copiar/colar
+   - **Tarefas diárias** → Execute `tasks/commit.md`, `tasks/code-review.md` ou `tasks/documentation.md` diretamente
+   - **Referência rápida** → Veja `QUICK_REFERENCE.md` para consulta de comandos
+
+8. **Adapte ao contexto do projeto**
    - Ajuste nomes de serviços, paths, comandos específicos, ambientes (dev/stage/prod) e políticas internas.
    - Para Python/SQLAlchemy: combine prompt base com arquivo de preferências se necessário (`cat base.md preferences.md`).
    - Para SQLAlchemy: forneça DATABASE_URL para consultar dados reais do banco.
 
-8. **Envie o prompt para a IA**
+9. **Envie o prompt para a IA**
    - Use o template correspondente, incluindo contexto adicional do seu projeto quando necessário.
 
-9. **Revise antes de aplicar**
+10. **Revise antes de aplicar**
    - Valide a saída gerada usando a checklist da pasta correspondente (quando aplicável).
    - Só depois aplique o script/mudança em repositórios ou ambientes reais.
 

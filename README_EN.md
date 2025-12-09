@@ -50,6 +50,17 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 │   │       └── daniel_gines_preferences.md
 │   └── examples/
 │       └── before_after_model_documentation.md
+├── workflows/
+│   ├── README.md
+│   ├── QUICK_REFERENCE.md
+│   ├── setup/
+│   │   ├── claude-code.md
+│   │   ├── cursor.md
+│   │   └── generic-ide.md
+│   └── tasks/
+│       ├── commit.md
+│       ├── code-review.md
+│       └── documentation.md
 ├── README.md
 └── shell/
     ├── Shell_Script_Best_Practices_Guide.md
@@ -152,6 +163,32 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 - **Template_Prompt_IA_Shell_Script_Generation.md**
   Prompt template to guide AI in generating Bash scripts aligned with the best practices guide.
 
+### `workflows/`
+
+- **README.md**
+  Complete documentation for integrating infra-ai-prompts standards with AI-powered development tools (Claude Code, Cursor, generic IDEs). Explains workflow philosophy, tool comparison, time savings metrics, and module orchestration.
+
+- **QUICK_REFERENCE.md**
+  Fast command lookup for daily workflow usage. One-time setup commands, daily commands by tool, and common troubleshooting.
+
+- **setup/claude-code.md**
+  Workflow template for configuring Claude Code projects. Creates `.claude/` directory structure with CLAUDE.md memory file, custom slash commands (`/commit`, `/doc-python`, `/review`), and security-focused permissions.
+
+- **setup/cursor.md**
+  Workflow template for configuring Cursor IDE projects. Creates `.cursorrules` configuration file that automatically applies infra-ai-prompts standards during natural language interactions.
+
+- **setup/generic-ide.md**
+  Manual integration guide for IDEs without native AI support (VS Code, PyCharm, IntelliJ, Vim). Provides 4 integration patterns: prompt composition, IDE snippets, shell aliases, and git hooks.
+
+- **tasks/commit.md**
+  Smart commit workflow. Analyzes staged changes, detects type/scope/breaking changes, and generates commit messages following Conventional Commits specification from `@commits/` module.
+
+- **tasks/code-review.md**
+  Technical code review workflow. 4-layer security and quality analysis (Security, Best Practices, Code Quality, Documentation) using checklists from `@shell/`, `@python/`, or `@just/` modules.
+
+- **tasks/documentation.md**
+  Code documentation workflow. Standardizes docstrings, improves inline comments, and applies framework-specific preferences from `@python/` or `@sqlalchemy/` modules.
+
 ---
 
 ## How to Use These Files
@@ -163,6 +200,7 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - SQLAlchemy models → `sqlalchemy/` folder
    - Just scripts → `just/` folder
    - Bash scripts → `shell/` folder
+   - AI tool integration → `workflows/` folder
 
 2. **For commits, choose the specific scenario:**
    - **First repository commit** → `First_Commit_Instructions.md`
@@ -195,15 +233,22 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - `...Best_Practices_Guide...` → technical reference for how the output should be structured.
    - `...Checklist...` → use in final review of what was generated.
 
-7. **Adapt to project context**
+7. **For workflows, choose integration level:**
+   - **One-time setup (Claude Code)** → Follow `setup/claude-code.md` to configure project with slash commands
+   - **One-time setup (Cursor)** → Follow `setup/cursor.md` to configure project with automatic standards
+   - **Manual integration (any IDE)** → Follow `setup/generic-ide.md` for copy/paste workflows
+   - **Daily tasks** → Execute `tasks/commit.md`, `tasks/code-review.md`, or `tasks/documentation.md` directly
+   - **Quick reference** → See `QUICK_REFERENCE.md` for command lookup
+
+8. **Adapt to project context**
    - Adjust service names, paths, specific commands, environments (dev/stage/prod), and internal policies.
    - For Python/SQLAlchemy: combine base prompt with preferences file if needed (`cat base.md preferences.md`).
    - For SQLAlchemy: provide DATABASE_URL to query real data from database.
 
-8. **Send the prompt to the AI**
+9. **Send the prompt to the AI**
    - Use the corresponding template, including additional context from your project when necessary.
 
-9. **Review before applying**
+10. **Review before applying**
    - Validate the generated output using the checklist from the corresponding folder (when applicable).
    - Only then apply the script/change to repositories or real environments.
 
