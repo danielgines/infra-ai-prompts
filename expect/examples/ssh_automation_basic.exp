@@ -1,0 +1,189 @@
+#!/usr/bin/expect -f
+
+################################################################################
+# Script: ssh_automation_basic.exp
+# Purpose: Basic SSH automation - connect, execute commands, disconnect
+# Author: Example Script
+# Date: 2025-12-11
+#
+# Usage: ./ssh_automation_basic.exp <host> <user>
+#
+# Environment Variables:
+#   - SSH_PASSWORD: SSH login password (required)
+#
+# Prerequisites:
+#   - SSH access to remote host
+#   - expect package installed
+#
+# Exit Codes:
+#   - 0: Success
+#   - 1: Error (see stderr for details)
+################################################################################
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+set timeout 30
+log_user 1
+
+# ============================================================================
+# ARGUMENT VALIDATION
+# ============================================================================
+
+if {$argc < 2} {
+    puts stderr "Usage: $argv0 <host> <user>"
+    puts stderr ""
+    puts stderr "Environment variables required:"
+    puts stderr "  SSH_PASSWORD - SSH login password"
+    puts stderr ""
+    puts stderr "Example:"
+    puts stderr "  export SSH_PASSWORD='mypassword'"
+    puts stderr "  $argv0 192.168.1.100 admin"
+    exit 1
+}
+
+set host [lindex $argv 0]
+set user [lindex $argv 1]
+
+# ============================================================================
+# CREDENTIAL VALIDATION
+# ============================================================================
+
+if {![info exists env(SSH_PASSWORD)]} {
+    puts stderr "ERROR: SSH_PASSWORD environment variable not set"
+    puts stderr "Set with: export SSH_PASSWORD='your_password'"
+    exit 1
+}
+
+set password $env(SSH_PASSWORD)
+
+if {$password eq ""} {
+    puts stderr "ERROR: SSH_PASSWORD is empty"
+    exit 1
+}
+
+# ============================================================================
+# PROCEDURES
+# ============================================================================
+
+proc wait_for_prompt {} {
+    expect {
+        timeout {
+            puts stderr "ERROR: Timeout waiting for shell prompt"
+            exit 1
+        }
+        eof {
+            puts stderr "ERROR: Connection closed unexpectedly"
+            exit 1
+        }
+        -re "\[#\\$\] $" {
+            return 0
+        }
+    }
+}
+
+proc cleanup {} {
+    global spawn_id password
+
+    # Clear sensitive data
+    if {[info exists password]} {
+        unset password
+    }
+
+    # Close connection
+    if {[info exists spawn_id]} {
+        catch {close}
+        catch {wait}
+    }
+}
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+puts "=== SSH Automation Script ==="
+puts "Host: $host"
+puts "User: $user"
+puts ""
+
+# Set up cleanup on exit
+trap cleanup {SIGINT SIGTERM EXIT}
+
+# Connect via SSH
+puts "Connecting to $host..."
+spawn ssh "$user@$host"
+
+# Handle SSH interactions
+expect {
+    timeout {
+        puts stderr "ERROR: Connection timeout"
+        exit 1
+    }
+    "Connection refused" {
+        puts stderr "ERROR: Connection refused by remote host"
+        exit 1
+    }
+    "No route to host" {
+        puts stderr "ERROR: No route to host"
+        exit 1
+    }
+    "Host key verification failed" {
+        puts stderr "ERROR: Host key verification failed"
+        puts stderr "Possible man-in-the-middle attack or host key changed"
+        exit 1
+    }
+    "Are you sure you want to continue connecting" {
+        send "yes\r"
+        exp_continue
+    }
+    "password:" {
+        log_user 0
+        send "$password\r"
+        log_user 1
+    }
+    "Permission denied" {
+        puts stderr "ERROR: Permission denied - check credentials"
+        exit 1
+    }
+}
+
+# Wait for shell prompt after login
+puts "Logged in successfully"
+wait_for_prompt
+
+# Execute commands
+puts "\n=== Executing Commands ===\n"
+
+# Command 1: whoami
+send "whoami\r"
+wait_for_prompt
+
+# Command 2: hostname
+send "hostname\r"
+wait_for_prompt
+
+# Command 3: uptime
+send "uptime\r"
+wait_for_prompt
+
+# Command 4: disk usage
+send "df -h | head -5\r"
+wait_for_prompt
+
+# Command 5: memory info
+send "free -h\r"
+wait_for_prompt
+
+puts "\n=== Commands Completed ==="
+
+# Disconnect
+puts "Disconnecting..."
+send "exit\r"
+expect eof
+
+# Cleanup
+cleanup
+
+puts "Script completed successfully"
+exit 0

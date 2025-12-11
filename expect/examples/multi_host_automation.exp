@@ -1,0 +1,251 @@
+#!/usr/bin/expect -f
+
+################################################################################
+# Script: multi_host_automation.exp
+# Purpose: Execute commands on multiple hosts sequentially
+# Author: Example Script
+# Date: 2025-12-11
+#
+# Usage: ./multi_host_automation.exp <user> <host1> [host2] [host3] ...
+#
+# Environment Variables:
+#   - SSH_PASSWORD: SSH login password (required)
+#
+# Prerequisites:
+#   - SSH access to all remote hosts
+#   - expect package installed
+#
+# Exit Codes:
+#   - 0: All hosts successful
+#   - 1: One or more hosts failed
+################################################################################
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+set timeout 30
+log_user 1
+
+# Commands to execute on each host
+set commands {
+    "hostname"
+    "uptime"
+    "df -h | head -3"
+}
+
+# ============================================================================
+# ARGUMENT VALIDATION
+# ============================================================================
+
+if {$argc < 2} {
+    puts stderr "Usage: $argv0 <user> <host1> \[host2\] \[host3\] ..."
+    puts stderr ""
+    puts stderr "Environment variables required:"
+    puts stderr "  SSH_PASSWORD - SSH login password"
+    puts stderr ""
+    puts stderr "Example:"
+    puts stderr "  export SSH_PASSWORD='mypassword'"
+    puts stderr "  $argv0 admin server1.local server2.local server3.local"
+    exit 1
+}
+
+set user [lindex $argv 0]
+set hosts [lrange $argv 1 end]
+
+puts "User: $user"
+puts "Hosts: $hosts"
+puts "Total hosts: [llength $hosts]"
+puts ""
+
+# ============================================================================
+# CREDENTIAL VALIDATION
+# ============================================================================
+
+if {![info exists env(SSH_PASSWORD)]} {
+    puts stderr "ERROR: SSH_PASSWORD environment variable not set"
+    puts stderr "Set with: export SSH_PASSWORD='your_password'"
+    exit 1
+}
+
+set password $env(SSH_PASSWORD)
+
+if {$password eq ""} {
+    puts stderr "ERROR: SSH_PASSWORD is empty"
+    exit 1
+}
+
+# ============================================================================
+# PROCEDURES
+# ============================================================================
+
+proc wait_for_prompt {} {
+    expect {
+        timeout {
+            puts stderr "ERROR: Timeout waiting for shell prompt"
+            return 1
+        }
+        eof {
+            puts stderr "ERROR: Connection closed unexpectedly"
+            return 1
+        }
+        -re "\[#\\$\] $" {
+            return 0
+        }
+    }
+}
+
+proc connect_to_host {host user password} {
+    global spawn_id
+
+    puts "\n========================================="
+    puts "Connecting to: $host"
+    puts "========================================="
+
+    spawn ssh -o ConnectTimeout=10 "$user@$host"
+
+    expect {
+        timeout {
+            puts stderr "ERROR: Connection timeout to $host"
+            return 1
+        }
+        "Connection refused" {
+            puts stderr "ERROR: Connection refused by $host"
+            return 1
+        }
+        "No route to host" {
+            puts stderr "ERROR: No route to $host"
+            return 1
+        }
+        "Host key verification failed" {
+            puts stderr "ERROR: Host key verification failed for $host"
+            return 1
+        }
+        "Are you sure you want to continue connecting" {
+            send "yes\r"
+            exp_continue
+        }
+        "password:" {
+            log_user 0
+            send "$password\r"
+            log_user 1
+        }
+        "Permission denied" {
+            puts stderr "ERROR: Permission denied on $host"
+            return 1
+        }
+    }
+
+    # Wait for prompt
+    if {[wait_for_prompt] != 0} {
+        puts stderr "ERROR: Failed to get shell prompt on $host"
+        return 1
+    }
+
+    puts "Successfully connected to $host"
+    return 0
+}
+
+proc execute_commands {host commands} {
+    puts "\nExecuting commands on $host..."
+    puts "-----------------------------------------"
+
+    foreach cmd $commands {
+        puts "Command: $cmd"
+        send "$cmd\r"
+
+        if {[wait_for_prompt] != 0} {
+            puts stderr "ERROR: Failed to execute command on $host: $cmd"
+            return 1
+        }
+    }
+
+    puts "-----------------------------------------"
+    puts "All commands completed on $host"
+    return 0
+}
+
+proc disconnect_from_host {host} {
+    puts "\nDisconnecting from $host..."
+    send "exit\r"
+
+    expect {
+        timeout {
+            puts stderr "WARNING: Timeout during disconnect from $host"
+            catch {close}
+        }
+        eof {
+            # Normal disconnect
+        }
+    }
+
+    catch {wait}
+    puts "Disconnected from $host"
+}
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+puts "\n=== Multi-Host Automation Script ==="
+puts "Starting automation on [llength $hosts] host(s)\n"
+
+set successful_hosts 0
+set failed_hosts 0
+set results [list]
+
+# Process each host
+foreach host $hosts {
+    set host_success 0
+
+    # Connect to host
+    if {[connect_to_host $host $user $password] == 0} {
+        # Execute commands
+        if {[execute_commands $host $commands] == 0} {
+            set host_success 1
+            incr successful_hosts
+            lappend results "$host: SUCCESS"
+        } else {
+            incr failed_hosts
+            lappend results "$host: FAILED (command execution error)"
+        }
+
+        # Disconnect
+        disconnect_from_host $host
+    } else {
+        incr failed_hosts
+        lappend results "$host: FAILED (connection error)"
+    }
+
+    # Brief pause between hosts
+    sleep 1
+}
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+
+puts "\n========================================="
+puts "=== AUTOMATION SUMMARY ==="
+puts "========================================="
+puts "Total hosts: [llength $hosts]"
+puts "Successful: $successful_hosts"
+puts "Failed: $failed_hosts"
+puts ""
+puts "Results:"
+foreach result $results {
+    puts "  $result"
+}
+puts "========================================="
+
+# Clear password from memory
+unset password
+
+# Exit with appropriate code
+if {$failed_hosts > 0} {
+    puts "\nWARNING: Some hosts failed"
+    exit 1
+} else {
+    puts "\nSUCCESS: All hosts completed successfully"
+    exit 0
+}

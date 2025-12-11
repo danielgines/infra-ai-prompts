@@ -1,0 +1,200 @@
+#!/usr/bin/expect -f
+
+################################################################################
+# Script: scp_file_transfer.exp
+# Purpose: Automate SCP file transfer with password authentication
+# Author: Example Script
+# Date: 2025-12-11
+#
+# Usage: ./scp_file_transfer.exp <local_file> <user@host:remote_path>
+#
+# Environment Variables:
+#   - SCP_PASSWORD: SCP password (required)
+#
+# Prerequisites:
+#   - SCP access to remote host
+#   - expect package installed
+#
+# Exit Codes:
+#   - 0: Transfer successful
+#   - 1: Transfer failed
+################################################################################
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+# Long timeout for file transfers
+set timeout 300
+log_user 1
+
+# ============================================================================
+# ARGUMENT VALIDATION
+# ============================================================================
+
+if {$argc < 2} {
+    puts stderr "Usage: $argv0 <local_file> <user@host:remote_path>"
+    puts stderr ""
+    puts stderr "Environment variables required:"
+    puts stderr "  SCP_PASSWORD - SCP password"
+    puts stderr ""
+    puts stderr "Examples:"
+    puts stderr "  # Upload file"
+    puts stderr "  export SCP_PASSWORD='mypassword'"
+    puts stderr "  $argv0 /local/file.txt user@192.168.1.100:/remote/path/"
+    puts stderr ""
+    puts stderr "  # Download file"
+    puts stderr "  $argv0 user@192.168.1.100:/remote/file.txt /local/path/"
+    exit 1
+}
+
+set local_file [lindex $argv 0]
+set remote_location [lindex $argv 1]
+
+# ============================================================================
+# CREDENTIAL VALIDATION
+# ============================================================================
+
+if {![info exists env(SCP_PASSWORD)]} {
+    puts stderr "ERROR: SCP_PASSWORD environment variable not set"
+    puts stderr "Set with: export SCP_PASSWORD='your_password'"
+    exit 1
+}
+
+set password $env(SCP_PASSWORD)
+
+if {$password eq ""} {
+    puts stderr "ERROR: SCP_PASSWORD is empty"
+    exit 1
+}
+
+# ============================================================================
+# FILE VALIDATION
+# ============================================================================
+
+# Determine transfer direction
+if {[string match "*:*" $local_file]} {
+    # Download operation
+    set operation "download"
+    set source $local_file
+    set destination $remote_location
+
+    # Validate destination directory exists
+    set dest_dir [file dirname $destination]
+    if {![file isdirectory $dest_dir]} {
+        puts stderr "ERROR: Destination directory does not exist: $dest_dir"
+        exit 1
+    }
+} else {
+    # Upload operation
+    set operation "upload"
+    set source $local_file
+    set destination $remote_location
+
+    # Validate source file exists
+    if {![file exists $source]} {
+        puts stderr "ERROR: Source file does not exist: $source"
+        exit 1
+    }
+
+    # Get file size for progress indication
+    set filesize [file size $source]
+    set filesize_mb [expr {$filesize / 1048576.0}]
+    puts "File size: [format "%.2f" $filesize_mb] MB"
+}
+
+# ============================================================================
+# PROCEDURES
+# ============================================================================
+
+proc cleanup {} {
+    global spawn_id password
+
+    # Clear sensitive data
+    if {[info exists password]} {
+        unset password
+    }
+
+    # Close connection
+    if {[info exists spawn_id]} {
+        catch {close}
+        catch {wait}
+    }
+}
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+puts "=== SCP File Transfer ==="
+puts "Operation: $operation"
+puts "Source: $source"
+puts "Destination: $destination"
+puts ""
+
+# Set up cleanup on exit
+trap cleanup {SIGINT SIGTERM EXIT}
+
+# Start SCP
+puts "Starting transfer..."
+spawn scp -o StrictHostKeyChecking=no $source $destination
+
+# Handle SCP interactions
+expect {
+    timeout {
+        puts stderr "\nERROR: Transfer timeout after $timeout seconds"
+        exit 1
+    }
+    "Connection refused" {
+        puts stderr "ERROR: Connection refused by remote host"
+        exit 1
+    }
+    "No route to host" {
+        puts stderr "ERROR: No route to host"
+        exit 1
+    }
+    "No such file or directory" {
+        puts stderr "ERROR: File or directory not found"
+        exit 1
+    }
+    "Permission denied (publickey,password)" {
+        puts stderr "ERROR: Permission denied - password authentication may be disabled"
+        exit 1
+    }
+    "Are you sure you want to continue connecting" {
+        send "yes\r"
+        exp_continue
+    }
+    "password:" {
+        log_user 0
+        send "$password\r"
+        log_user 1
+        exp_continue
+    }
+    "Permission denied" {
+        puts stderr "\nERROR: Permission denied - check credentials"
+        exit 1
+    }
+    "100%" {
+        # Transfer completed successfully
+        puts ""
+    }
+    eof {
+        # Connection closed - check if this is success or failure
+    }
+}
+
+# Wait for process to complete
+catch {wait result}
+
+# Check exit status
+if {[lindex $result 3] == 0} {
+    puts "\n=== Transfer Completed Successfully ==="
+    cleanup
+    exit 0
+} else {
+    puts stderr "\n=== Transfer Failed ==="
+    puts stderr "Exit code: [lindex $result 3]"
+    cleanup
+    exit 1
+}
