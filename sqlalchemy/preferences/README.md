@@ -23,9 +23,9 @@ The preferences system allows you to extend base documentation prompts with:
 
 The base prompts provide industry-standard documentation:
 - `SQLAlchemy_Model_Documentation_Standards_Reference.md`: Standard formats
-- `Model_Documentation_Instructions.md`: Documentation generation
-- `Model_Comments_Update_Instructions.md`: Comment updates
-- `Baseline_Migration_Instructions.md`: Baseline migrations for existing databases
+- `SQLAlchemy_Model_Documentation_Instructions.md`: Documentation generation
+- `SQLAlchemy_Model_Comments_Update_Instructions.md`: Comment updates
+- `SQLAlchemy_Baseline_Migration_Instructions.md`: Baseline migrations for existing databases
 
 ### Preferences Layer
 
@@ -39,7 +39,7 @@ Your preferences file **extends** base prompts with:
 
 ```bash
 # Combine base prompt + preferences
-cat Model_Documentation_Instructions.md preferences/my_preferences.md > combined_prompt.md
+cat SQLAlchemy_Model_Documentation_Instructions.md preferences/my_preferences.md > combined_prompt.md
 
 # Send combined prompt to AI
 claude < combined_prompt.md
@@ -48,7 +48,7 @@ claude < combined_prompt.md
 Or in conversation:
 ```
 Please document my SQLAlchemy models following:
-1. Model_Documentation_Instructions.md (base standards)
+1. SQLAlchemy_Model_Documentation_Instructions.md (base standards)
 2. preferences/my_preferences.md (project-specific conventions)
 
 [Paste both files or reference them]
@@ -142,7 +142,7 @@ git commit -m "docs: add SQLAlchemy documentation preferences"
 ## Database Documentation
 
 When documenting models, use:
-1. Base: `infra-ai-prompts/sqlalchemy/Model_Documentation_Instructions.md`
+1. Base: `infra-ai-prompts/sqlalchemy/SQLAlchemy_Model_Documentation_Instructions.md`
 2. Project: `preferences/my_project_preferences.md`
 
 Combine both when prompting AI for model documentation.
@@ -277,7 +277,7 @@ When adopting Alembic on existing databases:
 - Create baseline migration documenting current schema
 - Use `alembic stamp` (not `upgrade`) on existing databases
 - Document all tables, relationships, and constraints in baseline
-- See: `Baseline_Migration_Instructions.md`
+- See: `SQLAlchemy_Baseline_Migration_Instructions.md`
 ```
 
 ### 6. Security Requirements
@@ -372,7 +372,7 @@ git commit -m "docs: add SQLAlchemy documentation preferences"
 
 ```bash
 # Document new model
-cat path/to/infra-ai-prompts/sqlalchemy/Model_Documentation_Instructions.md \
+cat path/to/infra-ai-prompts/sqlalchemy/SQLAlchemy_Model_Documentation_Instructions.md \
     docs/sqlalchemy_preferences.md > /tmp/combined_prompt.md
 
 # Send to AI
@@ -388,7 +388,7 @@ claude < /tmp/combined_prompt.md
 
 When adding or updating SQLAlchemy models:
 
-1. **Base standards**: Follow [Model_Documentation_Instructions.md](link)
+1. **Base standards**: Follow [SQLAlchemy_Model_Documentation_Instructions.md](link)
 2. **Project conventions**: Follow [sqlalchemy_preferences.md](link)
 3. **Always query real data**: Include examples from database
 4. **Anonymize PII**: Never expose real user data in comments

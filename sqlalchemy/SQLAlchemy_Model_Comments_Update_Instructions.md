@@ -2,7 +2,7 @@
 
 > **Context**: Use this prompt to update ONLY inline comments on SQLAlchemy models with real database examples, preserving all existing code.
 > **Reference**: See `SQLAlchemy_Model_Documentation_Standards_Reference.md` for comment format standards.
-> **Note**: This is a lightweight alternative to `Model_Documentation_Instructions.md` when you only need to refresh comments.
+> **Note**: This is a lightweight alternative to `SQLAlchemy_Model_Documentation_Instructions.md` when you only need to refresh comments.
 
 ---
 

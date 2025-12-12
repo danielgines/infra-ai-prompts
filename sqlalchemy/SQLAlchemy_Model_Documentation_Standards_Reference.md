@@ -741,7 +741,7 @@ def downgrade() -> None:
 - ❌ Don't modify baseline after applying to production
 - ❌ Don't run `upgrade` on databases with existing tables
 
-**Reference**: See `Baseline_Migration_Instructions.md` for detailed guide on creating and applying baseline migrations.
+**Reference**: See `SQLAlchemy_Baseline_Migration_Instructions.md` for detailed guide on creating and applying baseline migrations.
 
 **Template**: See `examples/alembic_baseline_migration_template.py` for complete baseline template.
 
