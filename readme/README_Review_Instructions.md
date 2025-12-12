@@ -600,7 +600,7 @@ Brief description
 
 - **Standards**: `README_Standards_Reference.md`
 - **Examples**: `examples/before_after_readme.md`
-- **Template**: `New_README_Instructions.md`
+- **Template**: `README_Generation_Instructions.md`
 - **Checklist**: `README_Checklist.md`
 
 ---

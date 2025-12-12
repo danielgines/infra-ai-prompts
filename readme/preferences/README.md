@@ -40,7 +40,7 @@ Edit `my_readme_preferences.md` to include:
 **Option A: Manual concatenation**
 
 ```bash
-cat ../New_README_Instructions.md my_readme_preferences.md > combined_prompt.txt
+cat ../README_Generation_Instructions.md my_readme_preferences.md > combined_prompt.txt
 ```
 
 **Option B: Direct paste** (simpler)
@@ -121,7 +121,7 @@ Specify which badges to include:
 ### Use Case 1: Open Source Library
 
 ```bash
-cat ../New_README_Instructions.md \
+cat ../README_Generation_Instructions.md \
     open_source_library_preferences.md > prompt.txt
 ```
 
@@ -136,7 +136,7 @@ cat ../New_README_Instructions.md \
 ### Use Case 2: Internal Tool
 
 ```bash
-cat ../New_README_Instructions.md \
+cat ../README_Generation_Instructions.md \
     internal_tool_preferences.md > prompt.txt
 ```
 
@@ -150,7 +150,7 @@ cat ../New_README_Instructions.md \
 ### Use Case 3: Microservice
 
 ```bash
-cat ../New_README_Instructions.md \
+cat ../README_Generation_Instructions.md \
     microservice_preferences.md > prompt.txt
 ```
 
@@ -170,7 +170,7 @@ cat ../New_README_Instructions.md \
 ```
 Prompt structure:
 
-1. Base instructions (from New_README_Instructions.md)
+1. Base instructions (from README_Generation_Instructions.md)
 2. Your preferences (from my_readme_preferences.md)
 3. Repository context
 4. Request: "Generate README following these conventions"
@@ -197,7 +197,7 @@ Add preferences to workspace `.copilot-instructions.md`
 ## References
 
 - [README_Standards_Reference.md](../README_Standards_Reference.md)
-- [New_README_Instructions.md](../New_README_Instructions.md)
+- [README_Generation_Instructions.md](../README_Generation_Instructions.md)
 - [README_Review_Instructions.md](../README_Review_Instructions.md)
 
 ---

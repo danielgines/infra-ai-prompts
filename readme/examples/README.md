@@ -26,7 +26,7 @@ Complete before/after transformations showing:
 
 ### For New Projects
 
-1. **Start with template** (`New_README_Instructions.md`)
+1. **Start with template** (`README_Generation_Instructions.md`)
 2. **Study examples** in `before_after_readme.md`
 3. **Apply to your project**
 4. **Review with checklist** (`README_Checklist.md`)
@@ -77,7 +77,7 @@ Lead with what makes project unique:
 ## Additional Resources
 
 - [README_Standards_Reference.md](../README_Standards_Reference.md)
-- [New_README_Instructions.md](../New_README_Instructions.md)
+- [README_Generation_Instructions.md](../README_Generation_Instructions.md)
 - [README_Checklist.md](../README_Checklist.md)
 
 ---

@@ -250,8 +250,8 @@ Before publishing README:
 ## Additional Resources
 
 - [README_Standards_Reference.md](./README_Standards_Reference.md)
-- [New_README_Instructions.md](./New_README_Instructions.md)
-- [Update_README_Instructions.md](./Update_README_Instructions.md)
+- [README_Generation_Instructions.md](./README_Generation_Instructions.md)
+- [README_Update_Instructions.md](./README_Update_Instructions.md)
 - [README_Review_Instructions.md](./README_Review_Instructions.md)
 - [examples/before_after_readme.md](./examples/before_after_readme.md)
 
