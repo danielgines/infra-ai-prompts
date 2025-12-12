@@ -40,7 +40,7 @@ Edit `my_preferences.md` to include:
 
 ```bash
 # Combine base prompt + your preferences
-cat ../Code_Documentation_Instructions.md my_preferences.md > combined_prompt.txt
+cat ../Python_Documentation_Generation_Instructions.md my_preferences.md > combined_prompt.txt
 
 # Copy to clipboard (macOS)
 pbcopy < combined_prompt.txt
@@ -120,7 +120,7 @@ For complex projects, combine multiple preference files:
 ```bash
 # Base + team + personal preferences
 cat \
-  ../Code_Documentation_Instructions.md \
+  ../Python_Documentation_Generation_Instructions.md \
   team_preferences.md \
   my_preferences.md \
   > combined_prompt.txt
@@ -147,7 +147,7 @@ cp preferences_template.md daniel_preferences.md
 vim daniel_preferences.md
 
 # Use forever
-cat ../Code_Documentation_Instructions.md daniel_preferences.md
+cat ../Python_Documentation_Generation_Instructions.md daniel_preferences.md
 ```
 
 ### Use Case 2: Team with Shared Standards
@@ -164,7 +164,7 @@ cp preferences_template.md my_extras.md
 # Keep my_extras.md in .gitignore
 
 # Combine both
-cat ../Code_Documentation_Instructions.md team_preferences.md my_extras.md
+cat ../Python_Documentation_Generation_Instructions.md team_preferences.md my_extras.md
 ```
 
 ### Use Case 3: Multiple Projects with Different Conventions
@@ -180,10 +180,10 @@ Switch preferences based on current project:
 
 ```bash
 # Working on Django project
-cat ../Code_Documentation_Instructions.md project_a_preferences.md
+cat ../Python_Documentation_Generation_Instructions.md project_a_preferences.md
 
 # Working on Scrapy project
-cat ../Code_Documentation_Instructions.md project_c_preferences.md
+cat ../Python_Documentation_Generation_Instructions.md project_c_preferences.md
 ```
 
 ---

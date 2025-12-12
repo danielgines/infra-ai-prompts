@@ -1,7 +1,7 @@
 # Python Documentation Preferences Template
 
 > **Instructions**: Copy this file and customize for your needs.
-> Append to base prompts (`Code_Documentation_Instructions.md`) for personalized behavior.
+> Append to base prompts (`Python_Documentation_Generation_Instructions.md`) for personalized behavior.
 
 ---
 
