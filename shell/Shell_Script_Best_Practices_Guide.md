@@ -1087,4 +1087,909 @@ main "$@"
 
 ---
 
+## 10. Advanced Debugging Techniques
+
+> **Note**: This section provides detailed debugging methods and tool usage. For a quick debugging workflow, see `Shell_Script_Debugging_Instructions.md`.
+
+### Basic Debugging Techniques
+
+#### Technique 1: Echo Debugging
+
+```bash
+# Simple variable inspection
+echo "DEBUG: Variable value: [$VAR]"
+
+# Show special characters
+printf "DEBUG: VAR=[%s]\n" "$VAR"
+
+# Dump all variables at a point
+declare -p | grep -E '^declare -[^-]*x'  # Exported variables only
+```
+
+#### Technique 2: Set -x Tracing
+
+```bash
+# Enable for entire script
+#!/bin/bash
+set -x
+
+# Enable with custom prompt
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+set -x
+
+# Output example:
+# +(script.sh:42): main(): echo "Processing file"
+```
+
+#### Technique 3: Trap Command for Error Context
+
+```bash
+# Basic error trap
+trap 'echo "Error on line $LINENO"' ERR
+
+# Enhanced error trap with context
+trap 'echo "Error: Command failed with exit code $?"
+      echo "  Line: $LINENO"
+      echo "  Command: $BASH_COMMAND"
+      echo "  Function: ${FUNCNAME[*]}"' ERR
+
+# Trap all exits for cleanup
+trap 'echo "Exiting with code $?"; cleanup_function' EXIT
+```
+
+#### Technique 4: Log File Analysis
+
+```bash
+# Create log with timestamps
+exec 1> >(ts '[%Y-%m-%d %H:%M:%S]' > /var/log/script.log)
+exec 2>&1
+
+# Or manually add timestamps
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a /var/log/script.log
+}
+
+log "Starting process"
+```
+
+---
+
+### Advanced Debugging Techniques
+
+#### Technique 5: BASH_XTRACEFD for Trace Redirection
+
+**Problem**: `set -x` output mixes with regular output, making it hard to read.
+
+**Solution**: Redirect trace to separate file descriptor.
+
+```bash
+#!/bin/bash
+
+# Open FD 19 for trace output
+exec 19>/var/log/script_trace.log
+
+# Send all trace output to FD 19
+BASH_XTRACEFD=19
+
+# Enable tracing
+set -x
+
+# Regular output goes to stdout, trace goes to FD 19
+echo "This goes to stdout"
+cat /etc/hostname  # Command and output separated
+
+# Close trace FD when done
+exec 19>&-
+```
+
+#### Technique 6: Function Call Stack with caller
+
+```bash
+#!/bin/bash
+shopt -s extdebug  # Required for caller to work properly
+
+# Print full call stack
+print_stack() {
+    local frame=0
+    echo "=== Call Stack ===" >&2
+    while caller $frame; do
+        ((frame++))
+    done | while read line func file; do
+        echo "  at $func() in $file:$line" >&2
+    done
+    echo "=================" >&2
+}
+
+# Use in error handler
+trap 'echo "Error at line $LINENO"; print_stack; exit 1' ERR
+
+function level3() {
+    false  # This will trigger error
+}
+
+function level2() {
+    level3
+}
+
+function level1() {
+    level2
+}
+
+level1
+```
+
+**Output:**
+```
+Error at line 14
+=== Call Stack ===
+  at level3() in script.sh:14
+  at level2() in script.sh:18
+  at level1() in script.sh:22
+  at main() in script.sh:25
+=================
+```
+
+#### Technique 7: BASH_SOURCE and LINENO for Context
+
+```bash
+# Add context to every log message
+log_with_context() {
+    local msg="$1"
+    echo "[${BASH_SOURCE[1]}:${BASH_LINENO[0]}] ${FUNCNAME[1]}: $msg" >&2
+}
+
+function process_data() {
+    log_with_context "Starting data processing"
+    # ... processing ...
+    log_with_context "Data processing complete"
+}
+```
+
+#### Technique 8: Subshell Debugging
+
+**Problem**: Subshells inherit variables but changes don't propagate back.
+
+```bash
+# Demonstrate subshell issue
+VAR="initial"
+echo "Before: VAR=$VAR"
+
+(
+    VAR="changed_in_subshell"
+    echo "Inside subshell: VAR=$VAR"
+)
+
+echo "After: VAR=$VAR"  # Still "initial"
+
+# Debug subshells with explicit markers
+(
+    echo ">>> ENTERING SUBSHELL $$" >&2
+    # subshell code
+    echo "<<< EXITING SUBSHELL $$" >&2
+) 2>&1 | sed 's/^/[SUBSHELL] /'
+```
+
+#### Technique 9: Pipe Failure Detection (PIPESTATUS)
+
+```bash
+# Problem: Only last command's exit code is captured
+cat nonexistent.txt | grep pattern | wc -l
+echo "Exit code: $?"  # Only shows wc exit code!
+
+# Solution: Use PIPESTATUS array
+cat nonexistent.txt | grep pattern | wc -l
+echo "Pipe statuses: ${PIPESTATUS[@]}"
+# Output: Pipe statuses: 1 1 0
+
+# Proper error checking
+cat file.txt | grep pattern | wc -l
+if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    echo "ERROR: cat failed"
+elif [[ ${PIPESTATUS[1]} -ne 0 ]]; then
+    echo "ERROR: grep failed"
+fi
+
+# Or use pipefail for automatic failure
+set -o pipefail
+cat nonexistent.txt | grep pattern | wc -l
+echo "Exit code: $?"  # Now shows first failure!
+```
+
+#### Technique 10: Process Substitution Debugging
+
+```bash
+# Process substitution creates temporary FIFOs
+# Debug by showing them explicitly
+
+# See the FIFO
+echo "FIFO: $(echo <(echo test))"
+# Output: FIFO: /dev/fd/63
+
+# Debug process substitution
+diff <(ssh host1 'cat /etc/config') <(ssh host2 'cat /etc/config') || {
+    echo "Configs differ"
+    echo "Host1:" >&2
+    ssh host1 'cat /etc/config' >&2
+    echo "Host2:" >&2
+    ssh host2 'cat /etc/config' >&2
+}
+```
+
+#### Technique 11: Signal Handling Debugging
+
+```bash
+# Show signal handling setup
+trap -p
+
+# Debug signal handlers
+trap 'echo "Received SIGTERM"; cleanup; exit 143' TERM
+trap 'echo "Received SIGINT"; cleanup; exit 130' INT
+trap 'echo "Received SIGHUP"; reload_config' HUP
+
+# Test signal handling
+kill -TERM $$ &  # Send signal to self
+
+# Ignore signals during critical section
+trap '' TERM INT  # Ignore TERM and INT
+critical_operation
+trap - TERM INT   # Restore default handlers
+```
+
+---
+
+### Tool-Specific Debugging
+
+#### Tool 1: ShellCheck (Static Analysis)
+
+**Purpose**: Find bugs before running the script.
+
+```bash
+# Install ShellCheck
+sudo apt-get install shellcheck  # Debian/Ubuntu
+sudo dnf install ShellCheck      # Fedora/RHEL
+
+# Basic usage
+shellcheck script.sh
+
+# Strict checking
+shellcheck -s bash -o all script.sh
+
+# Exclude specific warnings
+shellcheck -e SC2034,SC2154 script.sh
+
+# JSON output for automated processing
+shellcheck -f json script.sh
+```
+
+**Common issues found:**
+- SC2086: Variable not quoted (word splitting)
+- SC2181: Checking exit code in wrong way
+- SC2164: cd without checking if it succeeded
+- SC2046: Unquoted command substitution
+- SC2068: Array expanded incorrectly
+
+#### Tool 2: Bashdb (Interactive Debugger)
+
+**Purpose**: Step through script line by line.
+
+```bash
+# Install bashdb
+sudo apt-get install bashdb  # Debian/Ubuntu
+
+# Run script under debugger
+bashdb script.sh
+
+# Common bashdb commands:
+# s         - Step (into functions)
+# n         - Next (over functions)
+# c         - Continue until breakpoint
+# l         - List source code
+# p VAR     - Print variable
+# b 42      - Set breakpoint at line 42
+# d 1       - Delete breakpoint 1
+# bt        - Show backtrace (call stack)
+# q         - Quit debugger
+```
+
+**Example session:**
+```bash
+$ bashdb script.sh
+bashdb<0> b 42      # Set breakpoint at line 42
+bashdb<1> c         # Continue to breakpoint
+bashdb<2> p $VAR    # Print VAR value
+bashdb<3> s         # Step into function
+bashdb<4> bt        # Show call stack
+bashdb<5> q         # Quit
+```
+
+---
+
+#### Tool 3: strace (System Call Tracing)
+
+**Purpose**: See exactly what system calls the script makes.
+
+```bash
+# Basic usage
+strace ./script.sh
+
+# Write trace to file
+strace -o trace.log ./script.sh
+
+# Follow forked processes
+strace -f ./script.sh
+
+# Only show specific system calls
+strace -e trace=file ./script.sh      # File operations only
+strace -e trace=process ./script.sh   # Process operations
+strace -e trace=network ./script.sh   # Network operations
+strace -e trace=open,read,write ./script.sh  # Specific calls
+
+# Show timestamps
+strace -t ./script.sh           # Time of day
+strace -tt ./script.sh          # Microsecond precision
+strace -r ./script.sh           # Relative time between calls
+
+# Show call duration
+strace -T ./script.sh
+
+# Attach to running process
+strace -p $(pgrep -f script.sh)
+
+# Trace with full string output (no truncation)
+strace -s 4096 ./script.sh
+```
+
+**Common debugging scenarios:**
+
+```bash
+# Find which config files are being read
+strace -e trace=open,openat ./script.sh 2>&1 | grep -E '\.conf|\.cfg'
+
+# Find why file isn't found
+strace -e trace=file ./script.sh 2>&1 | grep ENOENT
+
+# Find permission denials
+strace -e trace=file ./script.sh 2>&1 | grep EACCES
+
+# Find what command is being executed
+strace -e trace=execve ./script.sh
+
+# See environment passed to child processes
+strace -e trace=execve -v ./script.sh
+```
+
+**Reading strace output:**
+
+```
+open("/etc/config.conf", O_RDONLY)      = -1 ENOENT (No such file or directory)
+```
+
+- `ENOENT`: File not found
+- `EACCES`: Permission denied
+- `EINVAL`: Invalid argument
+- `EAGAIN`: Resource temporarily unavailable
+
+---
+
+#### Tool 4: ltrace (Library Call Tracing)
+
+**Purpose**: Trace library function calls (libc, etc.).
+
+```bash
+# Install ltrace
+sudo apt-get install ltrace  # Debian/Ubuntu
+
+# Basic usage
+ltrace ./script.sh
+
+# Follow child processes
+ltrace -f ./script.sh
+
+# Show timestamps
+ltrace -t ./script.sh
+
+# Write to file
+ltrace -o trace.log ./script.sh
+
+# Count calls and show summary
+ltrace -c ./script.sh
+
+# Filter specific functions
+ltrace -e malloc,free ./script.sh
+ltrace -e '*alloc*' ./script.sh  # All allocation functions
+```
+
+**Use cases:**
+
+```bash
+# Debug memory allocation issues
+ltrace -e malloc,calloc,realloc,free ./script.sh
+
+# Debug string operations
+ltrace -e 'str*' ./script.sh
+
+# Debug file operations
+ltrace -e '*file*' ./script.sh
+```
+
+---
+
+#### Tool 5: lsof (List Open Files)
+
+**Purpose**: Debug file descriptor leaks and see what files are open.
+
+```bash
+# Install lsof
+sudo apt-get install lsof  # Debian/Ubuntu
+
+# Show all files opened by script
+lsof -p $(pgrep -f script.sh)
+
+# Show only regular files (no pipes, sockets)
+lsof -p $$ -a -d 0-9999 -a -t f
+
+# Monitor file descriptors in real-time
+watch -n 1 "lsof -p $(pgrep -f script.sh) | wc -l"
+
+# Find scripts with too many open files
+for pid in $(pgrep bash); do
+    count=$(lsof -p $pid 2>/dev/null | wc -l)
+    if [[ $count -gt 100 ]]; then
+        echo "PID $pid has $count open files"
+        ps -p $pid -o cmd=
+    fi
+done
+
+# Debug file descriptor leak
+cat > fd_test.sh <<'EOF'
+#!/bin/bash
+echo "Open FDs at start: $(ls /proc/$$/fd | wc -l)"
+
+# Open files without closing
+for i in {1..100}; do
+    exec {fd}< /etc/hostname
+    # BUG: Never closed!
+done
+
+echo "Open FDs after loop: $(ls /proc/$$/fd | wc -l)"
+ls -la /proc/$$/fd
+EOF
+```
+
+---
+
+#### Tool 6: ps and pstree (Process Analysis)
+
+```bash
+# Show process tree
+pstree -p $$
+
+# Show process with full command
+ps -p $$ -f
+
+# Show all bash processes
+ps aux | grep bash
+
+# Show process environment
+cat /proc/$$/environ | tr '\0' '\n'
+
+# Show process limits
+cat /proc/$$/limits
+
+# Monitor process resources
+watch -n 1 "ps -p $(pgrep -f script.sh) -o pid,ppid,vsz,rss,%cpu,%mem,etime,cmd"
+
+# Find zombie processes
+ps aux | awk '$8 ~ /Z/ {print}'
+
+# Find parent of zombies
+ps -ef | grep defunct
+```
+
+---
+
+#### Tool 7: netstat/ss (Network Debugging)
+
+```bash
+# Show network connections by script
+lsof -i -a -p $(pgrep -f script.sh)
+
+# Show listening ports
+ss -tlnp | grep bash
+
+# Monitor network activity
+watch -n 1 "ss -s"
+
+# Check if specific port is in use
+if ss -tln | grep -q ':8080 '; then
+    echo "Port 8080 already in use"
+fi
+
+# Find which process is using a port
+lsof -i :8080
+```
+
+---
+
+### Performance Profiling
+
+#### Profiling Technique 1: Time Command
+
+```bash
+# Simple timing
+time ./script.sh
+
+# Detailed timing
+/usr/bin/time -v ./script.sh
+
+# Output includes:
+#   - Real (wall clock) time
+#   - User CPU time
+#   - System CPU time
+#   - Memory usage
+#   - I/O operations
+#   - Context switches
+
+# Time specific sections
+TIMEFORMAT='Section took %R seconds'
+time {
+    expensive_operation
+}
+```
+
+---
+
+#### Profiling Technique 2: Set -x with Timestamps
+
+```bash
+# Add timestamps to debug output
+PS4='+ $(date "+%Y-%m-%d %H:%M:%S.%3N"): '
+set -x
+
+# Or with relative timing
+START_TIME=$SECONDS
+PS4='+ [$(($SECONDS - $START_TIME))s]: '
+set -x
+
+# Output shows how long each command takes:
+# + [0s]: command1
+# + [2s]: command2  # Took 2 seconds
+# + [5s]: command3  # Took 3 seconds
+```
+
+---
+
+#### Profiling Technique 3: Identifying Bottlenecks
+
+```bash
+# Profile each function
+profile_function() {
+    local func_name="$1"
+    shift
+    local start=$(date +%s%N)
+
+    "$func_name" "$@"
+    local result=$?
+
+    local end=$(date +%s%N)
+    local duration=$(( (end - start) / 1000000 ))  # Convert to milliseconds
+
+    echo "[PROFILE] $func_name took ${duration}ms" >&2
+    return $result
+}
+
+# Use it
+profile_function slow_operation arg1 arg2
+
+# Automatic profiling with trap
+profile_all_commands() {
+    trap 'echo "[CMD] $BASH_COMMAND"' DEBUG
+    SECONDS=0
+}
+
+# Find slow external commands
+strace -c ./script.sh  # Shows system call counts and time
+```
+
+---
+
+#### Profiling Technique 4: Subprocess Overhead Detection
+
+```bash
+# Count subprocess invocations
+PS4='+ $(echo "SUBPROC" >&2; exit): '
+set -x
+./script.sh 2>&1 | grep -c SUBPROC
+
+# Inefficient: Subprocess in loop
+for file in *.txt; do
+    basename "$file"  # External command!
+done
+
+# Efficient: Use parameter expansion
+for file in *.txt; do
+    echo "${file##*/}"  # Built-in string operation
+done
+
+# Measure difference
+time for file in *.txt; do basename "$file" > /dev/null; done
+time for file in *.txt; do echo "${file##*/}" > /dev/null; done
+```
+
+---
+
+#### Profiling Technique 5: External Command Optimization
+
+```bash
+# Inefficient: Multiple external commands
+for file in *.log; do
+    if grep -q ERROR "$file"; then
+        echo "$file" >> error_files.txt
+    fi
+done
+
+# Efficient: Single grep with multiple files
+grep -l ERROR *.log > error_files.txt
+
+# Inefficient: Repeated sed calls
+for file in *.txt; do
+    sed -i 's/old/new/' "$file"
+done
+
+# Efficient: Parallel execution
+parallel sed -i 's/old/new/' ::: *.txt
+
+# Or xargs
+printf '%s\n' *.txt | xargs -P 4 -I {} sed -i 's/old/new/' {}
+```
+
+---
+
+### Memory Debugging
+
+#### Memory Technique 1: Detecting Memory Leaks
+
+```bash
+# Monitor memory usage over time
+monitor_memory() {
+    local pid=$1
+    local interval=${2:-1}
+
+    while kill -0 "$pid" 2>/dev/null; do
+        ps -p "$pid" -o pid,vsz,rss,%mem,etime,cmd
+        sleep "$interval"
+    done
+}
+
+# Use it
+./long_running_script.sh &
+monitor_memory $! 5 > memory_log.txt
+
+# Check for growing memory
+awk '{if (NR>1) print $3}' memory_log.txt |
+    gnuplot -e "set terminal dumb; plot '-' with lines"
+```
+
+---
+
+#### Memory Technique 2: Process Memory Monitoring
+
+```bash
+# Show memory map
+pmap -x $$
+
+# Show detailed memory info
+cat /proc/$$/status | grep -E '^Vm|^Rss'
+
+# Monitor memory in real-time
+watch -n 1 "ps -p $$ -o pid,vsz,rss,%mem,cmd"
+
+# Find memory-intensive operations
+/usr/bin/time -v ./script.sh |& grep -E 'Maximum resident set size|Average resident set size'
+```
+
+---
+
+#### Memory Technique 3: Large Array/Variable Management
+
+```bash
+# Problem: Large arrays consume memory
+declare -a huge_array
+for i in {1..1000000}; do
+    huge_array+=("item_$i")
+done
+
+# Solution: Process data in chunks
+process_in_chunks() {
+    local chunk_size=1000
+    local chunk=()
+
+    while read -r line; do
+        chunk+=("$line")
+
+        if [[ ${#chunk[@]} -ge $chunk_size ]]; then
+            # Process chunk
+            process_chunk "${chunk[@]}"
+            chunk=()  # Clear
+        fi
+    done < input.txt
+
+    # Process remaining
+    if [[ ${#chunk[@]} -gt 0 ]]; then
+        process_chunk "${chunk[@]}"
+    fi
+}
+
+# Or use streaming with pipes
+grep pattern huge_file.txt | while read -r line; do
+    process "$line"
+done  # No large array needed
+```
+
+---
+
+#### Memory Technique 4: Temporary File Accumulation
+
+```bash
+# Problem: Temp files not cleaned up
+process_data() {
+    local temp=$(mktemp)
+    # Process data
+    # BUG: temp file never removed if function fails
+}
+
+# Solution: Trap cleanup
+process_data() {
+    local temp=$(mktemp)
+    trap "rm -f '$temp'" RETURN  # Clean up on function return
+
+    # Process data
+
+    # Explicit cleanup
+    rm -f "$temp"
+    trap - RETURN
+}
+
+# Check for temp file leaks
+watch -n 5 "ls -lh /tmp | wc -l"
+
+# Clean up old temp files
+find /tmp -name "myapp.*" -mtime +1 -delete
+```
+
+---
+
+### Debugging Examples
+
+#### Example 1: Debugging a Hanging Script
+
+**Problem**: Script hangs indefinitely with no output.
+
+```bash
+#!/bin/bash
+# hanging_script.sh
+
+while read -r line; do
+    echo "Processing: $line"
+done
+
+echo "Done"
+```
+
+**Debugging process:**
+
+```bash
+# Step 1: Run with timeout to confirm hang
+timeout 5 ./hanging_script.sh
+echo "Exit code: $?"  # 124 = timeout occurred
+
+# Step 2: Identify where it hangs
+bash -x hanging_script.sh &
+SCRIPT_PID=$!
+sleep 2
+kill -QUIT $SCRIPT_PID  # Print stack trace
+
+# Step 3: Analyze - Script is waiting for input from stdin!
+# The 'while read' has no input source
+
+# Solution: Provide input or redirect from /dev/null
+while read -r line; do
+    echo "Processing: $line"
+done < /dev/null
+
+echo "Done"
+```
+
+---
+
+#### Example 2: Debugging Systemd Service Failures
+
+**Problem**: Script works manually but fails in systemd.
+
+```bash
+#!/bin/bash
+# systemd_service.sh
+
+echo "Starting service..."
+cd /opt/myapp
+./process_data.sh
+```
+
+**Debugging:**
+
+```bash
+# Step 1: Check service status
+systemctl status myapp.service
+
+# Output shows:
+# Main PID: 12345 (code=exited, status=1/FAILURE)
+# cd: /opt/myapp: Permission denied
+
+# Step 2: Check systemd user
+systemctl show myapp.service | grep User
+# User=myappuser
+
+# Step 3: Check directory permissions
+ls -ld /opt/myapp
+# drwxr-x--- root root /opt/myapp
+# Problem: myappuser can't access!
+
+# Step 4: Fix ownership
+sudo chown -R myappuser:myappuser /opt/myapp
+
+# Step 5: Verify manually as service user
+sudo -u myappuser bash -x /opt/myapp/systemd_service.sh
+```
+
+---
+
+#### Example 3: Debugging Performance Issues
+
+**Problem**: Script takes 10 minutes to process 100 files, used to take 1 minute.
+
+```bash
+#!/bin/bash
+# slow_script.sh
+
+for file in *.txt; do
+    # Process each file
+    grep -o 'ERROR' "$file" | wc -l > "${file}.count"
+done
+```
+
+**Debugging:**
+
+```bash
+# Step 1: Profile with time
+time ./slow_script.sh
+
+# Step 2: Profile with detailed timing
+/usr/bin/time -v ./slow_script.sh
+# Shows:
+#   - User time: 0.5s
+#   - System time: 9.5s  # High! Excessive I/O
+#   - File system operations: 10000
+
+# Step 3: Identify bottleneck - Creating small files in loop
+# Solution: Parallelize or batch operations
+
+# Fix 1: Parallel processing
+export -f process_file
+parallel process_file ::: *.txt
+
+# Fix 2: Reduce I/O operations
+{
+    for file in *.txt; do
+        count=$(grep -co 'ERROR' "$file")
+        echo "${file}.count:$count"
+    done
+} | while IFS=: read file count; do
+    echo "$count" > "$file"
+done
+
+# Result: 10 minutes → 30 seconds
+```
+
+---
+
 **Last Updated**: 2025-12-12

@@ -121,6 +121,22 @@ function save_state() {
     chmod 600 "$STATE_FILE"
 }
 
+# Load state value from state file
+function load_state() {
+    local key="$1"
+
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo ""
+        return 1
+    fi
+
+    if command -v jq &>/dev/null; then
+        jq -r --arg key "$key" '.[$key] // ""' "$STATE_FILE" 2>/dev/null || echo ""
+    else
+        echo ""
+    fi
+}
+
 # Check if source exists
 function validate_source() {
     if [[ ! -d "$BACKUP_SOURCE" ]]; then
@@ -294,8 +310,13 @@ function main() {
     show_statistics
 
     # Success notification
-    local size_mb
-    size_mb=$(save_state "last_backup_size" | xargs -I{} bash -c "echo \$(({} / 1024 / 1024))")
+    local size_bytes size_mb
+    size_bytes=$(load_state "last_backup_size")
+    if [[ -n "$size_bytes" && "$size_bytes" =~ ^[0-9]+$ ]]; then
+        size_mb=$((size_bytes / 1024 / 1024))
+    else
+        size_mb="unknown"
+    fi
     send_notification "✅ Backup completed successfully ($size_mb MB)"
 
     log "INFO" "=== Backup Complete ==="
