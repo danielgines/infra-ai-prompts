@@ -1,0 +1,230 @@
+# justfile - Main Project Task Runner
+# This demonstrates the standard usage of just with a main `justfile`
+# that auto-discovers when you run `just` from this directory.
+
+set shell := ["bash", "-c"]
+set dotenv-load := true
+
+# Import modular task files
+import 'scripts/docker.just'
+import 'scripts/tests.just'
+
+# Configuration
+app_name := "myapp"
+version := `git describe --tags --always 2>/dev/null || echo "dev"`
+
+# Default recipe - shows this message when you type 'just' without arguments
+default:
+    @just --list
+
+# Show project information
+info:
+    @echo "Project: {{app_name}}"
+    @echo "Version: {{version}}"
+    @echo "Shell:   $SHELL"
+    @echo "PWD:     $(pwd)"
+
+# Setup development environment
+setup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Setting up development environment for {{app_name}}..."
+
+    # Install dependencies
+    if [ -f "package.json" ]; then
+        echo "Installing npm dependencies..."
+        npm install
+    fi
+
+    if [ -f "requirements.txt" ]; then
+        echo "Installing Python dependencies..."
+        pip install -r requirements.txt
+    fi
+
+    # Create .env if it doesn't exist
+    if [ ! -f ".env" ]; then
+        if [ -f ".env.example" ]; then
+            echo "Creating .env from .env.example..."
+            cp .env.example .env
+        else
+            echo "Creating default .env..."
+            {
+                echo "APP_NAME={{app_name}}"
+                echo "APP_ENV=development"
+                echo "APP_PORT=8080"
+                echo "DATABASE_URL=postgresql://localhost/{{app_name}}_dev"
+            } > .env
+        fi
+    fi
+
+    echo "✓ Setup complete"
+
+# Clean build artifacts and temporary files
+clean:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Cleaning build artifacts..."
+
+    # Remove common build directories
+    rm -rf dist/ build/ *.egg-info/ .pytest_cache/ .coverage htmlcov/
+    rm -rf node_modules/.cache/
+
+    # Remove temporary files
+    find . -type f -name "*.pyc" -delete
+    find . -type d -name "__pycache__" -delete
+    find . -type f -name ".DS_Store" -delete
+
+    echo "✓ Cleaned"
+
+# Full CI pipeline (lint, test, build)
+ci: lint test build
+    @echo "✅ CI pipeline completed successfully"
+
+# Lint code
+lint:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Linting code..."
+
+    if [ -f "package.json" ]; then
+        npm run lint || true
+    fi
+
+    if command -v pylint &> /dev/null && [ -f "setup.py" ]; then
+        pylint src/ || true
+    fi
+
+    echo "✓ Lint complete"
+
+# Format code
+fmt:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Formatting code..."
+
+    if [ -f "package.json" ]; then
+        npm run format || npx prettier --write src/
+    fi
+
+    if command -v black &> /dev/null && [ -f "setup.py" ]; then
+        black src/
+    fi
+
+    echo "✓ Format complete"
+
+# Build for production
+build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Building {{app_name}} version {{version}}..."
+
+    if [ -f "package.json" ]; then
+        npm run build
+    fi
+
+    if [ -f "setup.py" ]; then
+        python setup.py bdist_wheel
+    fi
+
+    echo "✓ Build complete"
+
+# Start development server
+dev:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Starting development server..."
+
+    if [ -f "package.json" ]; then
+        npm run dev
+    elif [ -f "manage.py" ]; then
+        python manage.py runserver
+    elif [ -f "app.py" ]; then
+        python app.py
+    else
+        echo "Error: No development server script found"
+        exit 1
+    fi
+
+# Install production dependencies
+install-prod:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Installing production dependencies..."
+
+    if [ -f "package.json" ]; then
+        npm ci --production
+    fi
+
+    if [ -f "requirements.txt" ]; then
+        pip install --no-cache-dir -r requirements.txt
+    fi
+
+    echo "✓ Production dependencies installed"
+
+# Check project health
+health-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Running health checks..."
+
+    # Check required files
+    required_files=(".env" "README.md")
+    for file in "${required_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            echo "⚠️  Missing: $file"
+        else
+            echo "✓ Found: $file"
+        fi
+    done
+
+    # Check services
+    if command -v nc &> /dev/null; then
+        if nc -z localhost 8080 2>/dev/null; then
+            echo "✓ Service running on port 8080"
+        else
+            echo "⚠️  No service on port 8080"
+        fi
+    fi
+
+    echo "✓ Health check complete"
+
+# Show recent git commits
+log lines="10":
+    @git log --oneline -{{lines}} --decorate --color=always
+
+# Create a new release tag
+release version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [[ ! "{{version}}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Error: Version must be in format vX.Y.Z (e.g., v1.0.0)"
+        exit 1
+    fi
+
+    echo "Creating release {{version}}..."
+
+    # Check if working directory is clean
+    if [ -n "$(git status --porcelain)" ]; then
+        echo "Error: Working directory is not clean"
+        git status --short
+        exit 1
+    fi
+
+    # Create tag
+    git tag -a "{{version}}" -m "Release {{version}}"
+
+    echo "✓ Created tag {{version}}"
+    echo "Push with: git push origin {{version}}"
+
+# Helper: show all environment variables from .env
+show-env:
+    @cat .env 2>/dev/null || echo "No .env file found"

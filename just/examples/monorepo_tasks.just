@@ -237,7 +237,7 @@ add-dep workspace package:
 
 # Add dev dependency to workspace
 add-dev-dep workspace package:
-    #!/usr:bin/env bash
+    #!/usr/bin/env bash
     set -euo pipefail
 
     workspace_path=$(just _workspace-path {{workspace}})
