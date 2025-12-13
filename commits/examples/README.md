@@ -334,12 +334,12 @@ git push --force-with-lease
 
 ## Additional Resources
 
-- [Conventional Commits Reference](../Conventional_Commits_Reference.md)
-- [Commit Best Practices Guide](../Commit_Best_Practices_Guide.md)
-- [First Commit Instructions](../First_Commit_Instructions.md)
-- [Progress Commit Instructions](../Progress_Commit_Instructions.md)
-- [Commit Review Instructions](../Commit_Review_Instructions.md)
-- [Commit Message Checklist](../Commit_Message_Checklist.md)
+- [Conventional Commits Reference](../Commits_Message_Reference.md)
+- [Commit Best Practices Guide](../Commits_Message_Best_Practices_Guide.md)
+- [First Commit Instructions](../Commits_Message_Generation_First_Instructions.md)
+- [Progress Commit Instructions](../Commits_Message_Generation_Progress_Instructions.md)
+- [Commit Review Instructions](../Commits_Message_Review_Instructions.md)
+- [Commit Message Checklist](../Commits_Message_Checklist.md)
 
 ---
 

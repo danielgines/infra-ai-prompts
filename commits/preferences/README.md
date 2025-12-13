@@ -40,7 +40,7 @@ Edit `my_commit_preferences.md` to include:
 **Option A: Manual concatenation**
 
 ```bash
-cat ../Progress_Commit_Instructions.md my_commit_preferences.md > combined_prompt.txt
+cat ../Commits_Message_Generation_Progress_Instructions.md my_commit_preferences.md > combined_prompt.txt
 ```
 
 **Option B: Direct paste** (simpler)
@@ -91,7 +91,7 @@ git commit -m "docs(commits): add team commit conventions"
 ### Pattern 1: Layer Preferences
 
 ```bash
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     general_preferences.md \
     project_preferences.md > prompt.txt
 ```
@@ -100,11 +100,11 @@ cat ../Progress_Commit_Instructions.md \
 
 ```bash
 # Development team
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     dev_team_preferences.md > dev_prompt.txt
 
 # Release team
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     release_team_preferences.md > release_prompt.txt
 ```
 
@@ -180,7 +180,7 @@ Define how breaking changes are handled:
 ### Use Case 1: Monorepo with Multiple Projects
 
 ```bash
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     monorepo_scopes.md > prompt.txt
 ```
 
@@ -197,7 +197,7 @@ Use package name as scope:
 ### Use Case 2: Open Source Project with Contributors
 
 ```bash
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     oss_guidelines.md > prompt.txt
 ```
 
@@ -214,7 +214,7 @@ cat ../Progress_Commit_Instructions.md \
 ### Use Case 3: Enterprise with Compliance Requirements
 
 ```bash
-cat ../Progress_Commit_Instructions.md \
+cat ../Commits_Message_Generation_Progress_Instructions.md \
     enterprise_compliance.md > prompt.txt
 ```
 
@@ -237,7 +237,7 @@ cat ../Progress_Commit_Instructions.md \
 ```
 Prompt structure:
 
-1. Base instructions (from Progress_Commit_Instructions.md)
+1. Base instructions (from Commits_Message_Generation_Progress_Instructions.md)
 2. Your preferences (from my_commit_preferences.md)
 3. Git diff output
 4. Request: "Generate commit message following these conventions"
@@ -287,10 +287,10 @@ git config commit.template .gitmessage
 
 ## References
 
-- [Conventional Commits Reference](../Conventional_Commits_Reference.md)
-- [Commit Best Practices Guide](../Commit_Best_Practices_Guide.md)
-- [Progress Commit Instructions](../Progress_Commit_Instructions.md)
-- [Commit Review Instructions](../Commit_Review_Instructions.md)
+- [Conventional Commits Reference](../Commits_Message_Reference.md)
+- [Commit Best Practices Guide](../Commits_Message_Best_Practices_Guide.md)
+- [Progress Commit Instructions](../Commits_Message_Generation_Progress_Instructions.md)
+- [Commit Review Instructions](../Commits_Message_Review_Instructions.md)
 
 ---
 

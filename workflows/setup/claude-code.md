@@ -82,7 +82,7 @@ Examples:
 ## Automatic Workflows
 
 ### Commits
-Reference: @[INFRA_AI_PROMPTS_PATH]/commits/Progress_Commit_Instructions.md
+Reference: @[INFRA_AI_PROMPTS_PATH]/commits/Commits_Message_Generation_Progress_Instructions.md
 
 ### Python Documentation
 Reference: @[INFRA_AI_PROMPTS_PATH]/python/Code_Documentation_Instructions.md
@@ -119,8 +119,8 @@ File: `.claude/commands/commit.md`
 Generate commit message following workflow:
 
 1. Execute: `git diff --staged`
-2. Follow instructions: @commits/Progress_Commit_Instructions.md
-3. Reference standards: @commits/Conventional_Commits_Reference.md
+2. Follow instructions: @commits/Commits_Message_Generation_Progress_Instructions.md
+3. Reference standards: @commits/Commits_Message_Reference.md
 4. Generate commit message in Conventional Commits format
 5. Ask user approval before committing
 

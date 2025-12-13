@@ -1,7 +1,7 @@
 # Smart Commit Workflow — Task Template
 
 > **Context**: Use this workflow to generate commit messages following Conventional Commits specification with infra-ai-prompts standards.
-> **Reference**: Reads from `commits/Progress_Commit_Instructions.md` and `commits/Conventional_Commits_Reference.md`.
+> **Reference**: Reads from `commits/Commits_Message_Generation_Progress_Instructions.md` and `commits/Commits_Message_Reference.md`.
 
 ---
 
@@ -58,11 +58,11 @@ Identify:
 ### Step 3: Determine Commit Type
 
 **Read and follow:**
-- First commit: `@commits/First_Commit_Instructions.md`
-- Progress commit (most common): `@commits/Progress_Commit_Instructions.md`
-- History rewrite: `@commits/History_Rewrite_Instructions.md`
+- First commit: `@commits/Commits_Message_Generation_First_Instructions.md`
+- Progress commit (most common): `@commits/Commits_Message_Generation_Progress_Instructions.md`
+- History rewrite: `@commits/Commits_History_Rewrite_Instructions.md`
 
-**Always reference:** `@commits/Conventional_Commits_Reference.md`
+**Always reference:** `@commits/Commits_Message_Reference.md`
 
 ---
 
@@ -339,6 +339,6 @@ Check: git diff --staged --ignore-all-space
 
 ---
 
-**Reference**: See `commits/Progress_Commit_Instructions.md` for detailed commit generation process and `commits/Conventional_Commits_Reference.md` for specification.
+**Reference**: See `commits/Commits_Message_Generation_Progress_Instructions.md` for detailed commit generation process and `commits/Commits_Message_Reference.md` for specification.
 
 **Philosophy**: Commits are documentation. Write for future maintainers who need to understand why changes were made.

@@ -1,7 +1,7 @@
 # Commit Review Instructions — AI Prompt Template
 
 > **Context**: Use this prompt to review existing commit messages in a branch or repository for quality, standards compliance, and clarity.
-> **Reference**: See `Conventional_Commits_Reference.md` for standards.
+> **Reference**: See `Commits_Message_Reference.md` for standards.
 
 ---
 
@@ -112,7 +112,7 @@ Commit: abc1234 "add user authentication"
 Issue: Message doesn't follow Conventional Commits format
 Risk: Breaks automated tooling (changelog generation, semantic versioning)
 Fix: Prefix with type: feat(auth): add user authentication
-Reference: Conventional_Commits_Reference.md (Format Structure)
+Reference: Commits_Message_Reference.md (Format Structure)
 ```
 
 ---
@@ -725,9 +725,9 @@ git config commit.template .gitmessage
 
 ## References
 
-- **Conventional Commits**: `Conventional_Commits_Reference.md`
-- **Commit Best Practices**: `Commit_Best_Practices_Guide.md`
-- **Quick Checklist**: `Commit_Message_Checklist.md`
+- **Conventional Commits**: `Commits_Message_Reference.md`
+- **Commit Best Practices**: `Commits_Message_Best_Practices_Guide.md`
+- **Quick Checklist**: `Commits_Message_Checklist.md`
 
 ---
 

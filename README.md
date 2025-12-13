@@ -13,10 +13,10 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 ```text
 .
 ├── commits/
-│   ├── Conventional_Commits_Reference.md
-│   ├── First_Commit_Instructions.md
-│   ├── Progress_Commit_Instructions.md
-│   └── History_Rewrite_Instructions.md
+│   ├── Commits_Message_Reference.md
+│   ├── Commits_Message_Generation_First_Instructions.md
+│   ├── Commits_Message_Generation_Progress_Instructions.md
+│   └── Commits_History_Rewrite_Instructions.md
 ├── just/
 │   ├── Just_Script_Best_Practices_Guide.md
 │   ├── Just_Script_Checklist.md
@@ -70,16 +70,16 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
 
 ### `commits/`
 
-- **Conventional_Commits_Reference.md**
+- **Commits_Message_Reference.md**
   Base compartilhada com padrões de Conventional Commits. Referência para todos os templates de commit.
 
-- **First_Commit_Instructions.md**
+- **Commits_Message_Generation_First_Instructions.md**
   Template de prompt para geração de mensagem do primeiro commit do repositório.
 
-- **Progress_Commit_Instructions.md**
+- **Commits_Message_Generation_Progress_Instructions.md**
   Template de prompt para análise de mudanças e geração de mensagens de commit durante desenvolvimento ativo (uso mais frequente).
 
-- **History_Rewrite_Instructions.md**
+- **Commits_History_Rewrite_Instructions.md**
   Template de prompt para reescrita segura de histórico Git com mensagens padronizadas (uso avançado e raro).
 
 ### `python/`
@@ -203,10 +203,10 @@ O objetivo é padronizar o comportamento da IA para produzir saídas consistente
    - Integração com ferramentas IA → pasta `workflows/`
 
 2. **Para commits, escolha o cenário específico:**
-   - **Primeiro commit do repositório** → `First_Commit_Instructions.md`
-   - **Commit durante desenvolvimento** (mais comum) → `Progress_Commit_Instructions.md`
-   - **Reescrita de histórico** (avançado) → `History_Rewrite_Instructions.md`
-   - **Referência de padrões** → `Conventional_Commits_Reference.md`
+   - **Primeiro commit do repositório** → `Commits_Message_Generation_First_Instructions.md`
+   - **Commit durante desenvolvimento** (mais comum) → `Commits_Message_Generation_Progress_Instructions.md`
+   - **Reescrita de histórico** (avançado) → `Commits_History_Rewrite_Instructions.md`
+   - **Referência de padrões** → `Commits_Message_Reference.md`
 
 3. **Para Python, escolha a tarefa:**
    - **Padronizar docstrings** → `Code_Documentation_Instructions.md`

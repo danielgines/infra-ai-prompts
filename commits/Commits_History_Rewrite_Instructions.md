@@ -2,7 +2,7 @@
 
 > **Context**: Use this prompt when rewriting Git commit history (dangerous operation).
 > **Warning**: Only use on personal/unpushed branches or with team consensus.
-> **Reference**: See `Conventional_Commits_Reference.md` for standards.
+> **Reference**: See `Commits_Message_Reference.md` for standards.
 
 ---
 
@@ -439,6 +439,6 @@ Before executing any rewrite:
 
 ---
 
-**Reference**: `Conventional_Commits_Reference.md` for message standards.
+**Reference**: `Commits_Message_Reference.md` for message standards.
 
 **Remember**: History rewriting is powerful but dangerous. When in doubt, don't rewrite.

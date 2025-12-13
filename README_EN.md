@@ -13,10 +13,10 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 ```text
 .
 ├── commits/
-│   ├── Conventional_Commits_Reference.md
-│   ├── First_Commit_Instructions.md
-│   ├── Progress_Commit_Instructions.md
-│   └── History_Rewrite_Instructions.md
+│   ├── Commits_Message_Reference.md
+│   ├── Commits_Message_Generation_First_Instructions.md
+│   ├── Commits_Message_Generation_Progress_Instructions.md
+│   └── Commits_History_Rewrite_Instructions.md
 ├── just/
 │   ├── Just_Script_Best_Practices_Guide.md
 │   ├── Just_Script_Checklist.md
@@ -70,16 +70,16 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
 
 ### `commits/`
 
-- **Conventional_Commits_Reference.md**
+- **Commits_Message_Reference.md**
   Shared base with Conventional Commits standards. Reference for all commit templates.
 
-- **First_Commit_Instructions.md**
+- **Commits_Message_Generation_First_Instructions.md**
   Prompt template for generating the first commit message of a repository.
 
-- **Progress_Commit_Instructions.md**
+- **Commits_Message_Generation_Progress_Instructions.md**
   Prompt template for analyzing changes and generating commit messages during active development (most common use case).
 
-- **History_Rewrite_Instructions.md**
+- **Commits_History_Rewrite_Instructions.md**
   Prompt template for safe Git history rewriting with standardized messages (advanced and rare use).
 
 ### `python/`
@@ -203,10 +203,10 @@ The goal is to standardize AI behavior to produce consistent, secure outputs ali
    - AI tool integration → `workflows/` folder
 
 2. **For commits, choose the specific scenario:**
-   - **First repository commit** → `First_Commit_Instructions.md`
-   - **Commit during development** (most common) → `Progress_Commit_Instructions.md`
-   - **History rewrite** (advanced) → `History_Rewrite_Instructions.md`
-   - **Standards reference** → `Conventional_Commits_Reference.md`
+   - **First repository commit** → `Commits_Message_Generation_First_Instructions.md`
+   - **Commit during development** (most common) → `Commits_Message_Generation_Progress_Instructions.md`
+   - **History rewrite** (advanced) → `Commits_History_Rewrite_Instructions.md`
+   - **Standards reference** → `Commits_Message_Reference.md`
 
 3. **For Python, choose the task:**
    - **Standardize docstrings** → `Code_Documentation_Instructions.md`

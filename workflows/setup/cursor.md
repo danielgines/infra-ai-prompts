@@ -55,11 +55,11 @@ This project uses technical standards from infra-ai-prompts repository.
 
 ## Commit Standards
 
-Always follow Conventional Commits: @commits/Conventional_Commits_Reference.md
+Always follow Conventional Commits: @commits/Commits_Message_Reference.md
 
 When generating commits:
 1. Analyze: `git diff --staged`
-2. Follow: @commits/Progress_Commit_Instructions.md
+2. Follow: @commits/Commits_Message_Generation_Progress_Instructions.md
 3. Format: `type(scope): description`
 4. Validate against checklist
 
