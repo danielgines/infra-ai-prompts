@@ -1,4 +1,6 @@
-# Quick Reference — Workflows
+# Quick Reference — Workflows Meta-Module
+
+> **Module Type**: META-MODULE (orchestrates content modules)
 
 Fast command lookup for workflows module.
 

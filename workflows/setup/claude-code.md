@@ -85,10 +85,10 @@ Examples:
 Reference: @[INFRA_AI_PROMPTS_PATH]/commits/Commits_Message_Generation_Progress_Instructions.md
 
 ### Python Documentation
-Reference: @[INFRA_AI_PROMPTS_PATH]/python/Code_Documentation_Instructions.md
+Reference: @[INFRA_AI_PROMPTS_PATH]/python/Python_Documentation_Generation_Instructions.md
 
 ### README Updates
-Reference: @[INFRA_AI_PROMPTS_PATH]/readme/Update_README_Instructions.md
+Reference: @[INFRA_AI_PROMPTS_PATH]/readme/README_Update_Instructions.md
 
 ## Security Policy
 
@@ -134,7 +134,7 @@ File: `.claude/commands/doc-python.md`
 ```markdown
 Document Python code following standards:
 
-1. Read: @python/Code_Documentation_Instructions.md
+1. Read: @python/Python_Documentation_Generation_Instructions.md
 2. Apply: @python/Python_Docstring_Standards_Reference.md
 3. Check preferences: @python/preferences/examples/ (if available)
 4. Apply standards to selected or specified code
@@ -150,7 +150,7 @@ File: `.claude/commands/update-readme.md`
 ```markdown
 Update project README following standards:
 
-1. Read: @readme/Update_README_Instructions.md
+1. Read: @readme/README_Update_Instructions.md
 2. Apply: @readme/README_Standards_Reference.md
 3. Analyze current project (dependencies, structure, entry points)
 4. Update README preserving valid existing content

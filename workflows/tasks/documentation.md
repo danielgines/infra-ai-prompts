@@ -1,7 +1,8 @@
 # Code Documentation Workflow — Task Template
 
+> **Module Type**: Part of `workflows/` META-MODULE
 > **Context**: Use this workflow to document code following Google Style docstrings and technical standards from infra-ai-prompts.
-> **Reference**: Uses `python/Code_Documentation_Instructions.md`, `python/Python_Docstring_Standards_Reference.md`, `sqlalchemy/` standards.
+> **Reference**: Orchestrates standards from `python/` and `sqlalchemy/` content modules.
 
 ---
 
@@ -33,9 +34,9 @@ Determine:
 
 ### Step 2: Select Standards
 
-**Python**: `@python/Code_Documentation_Instructions.md` + `@python/Python_Docstring_Standards_Reference.md`
+**Python**: `@python/Python_Documentation_Generation_Instructions.md` + `@python/Python_Docstring_Standards_Reference.md`
 
-**SQLAlchemy**: `@sqlalchemy/Model_Documentation_Instructions.md` + `@sqlalchemy/SQLAlchemy_Model_Documentation_Standards_Reference.md`
+**SQLAlchemy**: `@sqlalchemy/SQLAlchemy_Model_Documentation_Instructions.md` + `@sqlalchemy/SQLAlchemy_Model_Documentation_Standards_Reference.md`
 
 **Preferences**: Check `@python/preferences/examples/` or `@sqlalchemy/preferences/examples/`
 
@@ -316,6 +317,6 @@ def fetch_api(endpoint: str, timeout: int = 30) -> dict:
 
 ---
 
-**Reference**: See `python/Code_Documentation_Instructions.md` and `sqlalchemy/Model_Documentation_Instructions.md` for detailed standards.
+**Reference**: See `python/Python_Documentation_Generation_Instructions.md` and `sqlalchemy/SQLAlchemy_Model_Documentation_Instructions.md` for detailed standards.
 
 **Philosophy**: Documentation is for future maintainers. Write clearly, completely, accurately.

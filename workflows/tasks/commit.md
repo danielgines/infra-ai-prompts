@@ -1,7 +1,8 @@
 # Smart Commit Workflow — Task Template
 
+> **Module Type**: Part of `workflows/` META-MODULE
 > **Context**: Use this workflow to generate commit messages following Conventional Commits specification with infra-ai-prompts standards.
-> **Reference**: Reads from `commits/Commits_Message_Generation_Progress_Instructions.md` and `commits/Commits_Message_Reference.md`.
+> **Reference**: Orchestrates prompts from `commits/` content module.
 
 ---
 

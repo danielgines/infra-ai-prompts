@@ -1,7 +1,8 @@
 # Technical Code Review Workflow — Task Template
 
+> **Module Type**: Part of `workflows/` META-MODULE
 > **Context**: Use this workflow for systematic code review following security and quality standards from infra-ai-prompts checklists.
-> **Reference**: Uses `python/`, `shell/Shell_Script_Checklist.md`, `just/Just_Script_Checklist.md`, `sqlalchemy/` standards.
+> **Reference**: Orchestrates standards from `python/`, `shell/`, `just/`, `sqlalchemy/` content modules.
 
 ---
 

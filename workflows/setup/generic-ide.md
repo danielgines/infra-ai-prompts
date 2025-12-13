@@ -1,7 +1,8 @@
 # Generic IDE Integration Guide — Workflow Template
 
+> **Module Type**: Part of `workflows/` META-MODULE
 > **Context**: Manual integration guide for IDEs without native AI support (VS Code, PyCharm, IntelliJ, Vim, etc.).
-> **Reference**: Uses prompts from `commits/`, `python/`, `shell/`, `just/`, `sqlalchemy/`, `readme/` modules via copy/paste.
+> **Reference**: Uses prompts from `commits/`, `python/`, `shell/`, `just/`, `sqlalchemy/`, `readme/` content modules via copy/paste.
 
 ---
 
@@ -21,7 +22,7 @@ Compose prompts by combining module content with current context.
 
 ```bash
 # 1. Copy prompt template
-cat ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md > /tmp/prompt.txt
+cat ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md > /tmp/prompt.txt
 
 # 2. Add current changes
 echo "\n\n## Current Changes:\n" >> /tmp/prompt.txt
@@ -47,7 +48,7 @@ Create IDE-specific snippets/templates:
   "Smart Commit Prompt": {
     "prefix": "!commit",
     "body": [
-      "Generate commit message following ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md",
+      "Generate commit message following ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md",
       "",
       "Changes:",
       "${TM_SELECTED_TEXT}",
@@ -58,7 +59,7 @@ Create IDE-specific snippets/templates:
   "Python Doc Prompt": {
     "prefix": "!doc-py",
     "body": [
-      "Document this Python code following ~/infra-ai-prompts/python/Code_Documentation_Instructions.md",
+      "Document this Python code following ~/infra-ai-prompts/python/Python_Documentation_Generation_Instructions.md",
       "",
       "Code:",
       "${TM_SELECTED_TEXT}",
@@ -84,10 +85,10 @@ Create command-line helpers:
 # ~/.bashrc or ~/.zshrc
 
 # Smart commit prompt
-alias commit-prompt='cat ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md && echo "\n\nChanges:" && git diff --staged'
+alias commit-prompt='cat ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md && echo "\n\nChanges:" && git diff --staged'
 
 # Python doc prompt
-alias doc-py='echo "Document following ~/infra-ai-prompts/python/Code_Documentation_Instructions.md\n\nCode:" && cat'
+alias doc-py='echo "Document following ~/infra-ai-prompts/python/Python_Documentation_Generation_Instructions.md\n\nCode:" && cat'
 
 # Code review prompt
 alias review-prompt='cat ~/infra-ai-prompts/shell/Shell_Script_Checklist.md && echo "\n\nCode to review:"'
@@ -113,7 +114,7 @@ Automate prompt composition with git hooks:
 # Generate prompt file
 PROMPT_FILE="/tmp/commit-prompt-$$.txt"
 
-cat ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md > "$PROMPT_FILE"
+cat ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md > "$PROMPT_FILE"
 echo "\n\n## Staged Changes:\n" >> "$PROMPT_FILE"
 git diff --staged >> "$PROMPT_FILE"
 
@@ -154,7 +155,7 @@ echo "Copy content and paste into AI tool for commit message."
 3. Compose prompt:
    ```
    Document this Python function following
-   ~/infra-ai-prompts/python/Code_Documentation_Instructions.md
+   ~/infra-ai-prompts/python/Python_Documentation_Generation_Instructions.md
 
    Code:
    [PASTE CODE HERE]
@@ -207,7 +208,7 @@ Create `AI_WORKFLOWS.md` in project:
 
 Prompt:
 ```
-Follow ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md
+Follow ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md
 Changes: [GIT_DIFF]
 ```
 
@@ -215,7 +216,7 @@ Changes: [GIT_DIFF]
 
 Prompt:
 ```
-Follow ~/infra-ai-prompts/python/Code_Documentation_Instructions.md
+Follow ~/infra-ai-prompts/python/Python_Documentation_Generation_Instructions.md
 Code: [CODE]
 ```
 
@@ -232,7 +233,7 @@ For web-based AI tools (ChatGPT, Claude):
 
 ```javascript
 javascript:(function(){
-  var prompt = 'Follow ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md\n\nChanges:\n';
+  var prompt = 'Follow ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md\n\nChanges:\n';
   prompt += document.querySelector('textarea').value;
   document.querySelector('textarea').value = prompt;
 })();
@@ -270,7 +271,7 @@ While not as integrated as Claude Code/Cursor:
      "codeium.customPrompts": [
        {
          "name": "Smart Commit",
-         "prompt": "Follow ~/infra-ai-prompts/commits/..."
+         "prompt": "Follow ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md"
        }
      ]
    }
@@ -285,7 +286,7 @@ While not as integrated as Claude Code/Cursor:
 1. Settings → Tools → External Tools → Add
 2. Name: "Generate Commit Prompt"
 3. Program: `bash`
-4. Arguments: `-c "cat ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md && git diff --staged"`
+4. Arguments: `-c "cat ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md && git diff --staged"`
 5. Output: Copy to clipboard
 
 **Usage:** Tools → External Tools → Generate Commit Prompt
@@ -300,10 +301,10 @@ While not as integrated as Claude Code/Cursor:
 " ~/.vimrc or ~/.config/nvim/init.vim
 
 " Smart commit prompt
-command! CommitPrompt :r !cat ~/infra-ai-prompts/commits/Progress_Commit_Instructions.md && echo && git diff --staged
+command! CommitPrompt :r !cat ~/infra-ai-prompts/commits/Commits_Message_Generation_Progress_Instructions.md && echo && git diff --staged
 
 " Python doc prompt
-command! -range DocPy :echo system('echo "Follow ~/infra-ai-prompts/python/Code_Documentation_Instructions.md\n\nCode:" && sed -n ' . a:firstline . ',' . a:lastline . 'p %')
+command! -range DocPy :echo system('echo "Follow ~/infra-ai-prompts/python/Python_Documentation_Generation_Instructions.md\n\nCode:" && sed -n ' . a:firstline . ',' . a:lastline . 'p %')
 ```
 
 **Usage:** `:CommitPrompt`, `:DocPy`

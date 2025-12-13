@@ -1,7 +1,8 @@
 # Cursor IDE Setup Instructions — Workflow Template
 
+> **Module Type**: Part of `workflows/` META-MODULE
 > **Context**: Use this workflow to configure Cursor IDE in infrastructure projects, integrating infra-ai-prompts standards via `.cursorrules` file.
-> **Reference**: Reads from `commits/`, `python/`, `shell/`, `just/`, `sqlalchemy/`, `readme/` modules.
+> **Reference**: Orchestrates standards from `commits/`, `python/`, `shell/`, `just/`, `sqlalchemy/`, `readme/` content modules.
 
 ---
 

@@ -1,7 +1,35 @@
-# Workflow Integration Templates
+# Workflow Integration Templates — Meta-Module
 
+> **Module Type**: **META-MODULE** (orchestration/integration module)
 > **Context**: Use these workflow templates to integrate infra-ai-prompts standards with AI-powered development tools (Claude Code, Cursor, generic IDEs).
 > **Reference**: Orchestrates prompts from `commits/`, `python/`, `shell/`, `just/`, `sqlalchemy/`, `readme/` modules.
+
+---
+
+## ⚠️ What is a Meta-Module?
+
+**This is NOT a content module** like `python/`, `shell/`, or `commits/`.
+
+### Module Types in This Repository
+
+| Type | Purpose | Examples | Structure |
+|------|---------|----------|-----------|
+| **Content Modules** | Generate/review specific code | `python/`, `shell/`, `expect/` | `*_Instructions.md`, `*_Reference.md`, examples/ |
+| **Meta-Modules** | Orchestrate content modules | `workflows/` | `setup/`, `tasks/`, references to other modules |
+
+**Key Differences**:
+
+❌ **workflows/ does NOT**:
+- Contain complete AI prompts for code generation
+- Have `*_Instructions.md`, `*_Reference.md`, `*_Checklist.md` files
+- Include `preferences/` or `examples/` directories
+- Work standalone (depends on content modules)
+
+✅ **workflows/ DOES**:
+- **Reference** content modules using `@module/` notation (e.g., `@commits/`, `@python/`)
+- **Integrate** multiple modules into complete workflows
+- **Configure** AI tools (Claude Code, Cursor, IDEs) to use repository standards
+- **Automate** the application of standards from other modules
 
 ---
 
@@ -10,8 +38,8 @@
 Workflow templates are **meta-prompts** that configure AI tools to automatically apply the technical standards from this repository.
 
 **Difference:**
-- **Standard prompts** (other modules): You copy and paste directly → "Generate commit following these rules..."
-- **Workflow templates** (this module): AI reads and applies automatically → "Configure project to use repo standards"
+- **Content module prompts**: You copy and paste directly → "Generate commit following these rules..."
+- **Workflow templates** (this meta-module): AI reads and applies automatically → "Configure project to use repo standards"
 
 ---
 
@@ -66,8 +94,8 @@ Use **whenever needed** to execute tasks following your standards:
 ```
 > Analyze git diff --staged
 > Generate commit following Conventional Commits
-> Reference commits/Progress_Commit_Instructions.md
-> Use commits/Conventional_Commits_Reference.md
+> Reference commits/Commits_Message_Generation_Progress_Instructions.md
+> Use commits/Commits_Message_Reference.md
 > Apply format: type(scope): description
 > Add body explaining why this change was made
 > Validate against checklist
@@ -120,14 +148,14 @@ Based on typical development workflows:
 
 ## Tool Comparison
 
-| Feature | Claude Code | Cursor | Windsurf | Generic IDE |
-|---------|-------------|--------|----------|-------------|
-| **Setup file** | `.claude/CLAUDE.md` | `.cursorrules` | TBD | Manual snippets |
-| **Command style** | Slash commands (`/commit`) | Natural chat | TBD | Copy/paste prompts |
-| **Automation** | Hooks, scripts | Chat-driven | TBD | Manual |
-| **Integration** | CLI-native | IDE-native | TBD | Copy/paste |
-| **Best for** | Terminal workflows | Interactive coding | TBD | Any tool |
-| **Learning curve** | Low | Low | TBD | Lowest |
+| Feature | Claude Code | Cursor | Generic IDE |
+|---------|-------------|--------|-------------|
+| **Setup file** | `.claude/CLAUDE.md` | `.cursorrules` | Manual snippets |
+| **Command style** | Slash commands (`/commit`) | Natural chat | Copy/paste prompts |
+| **Automation** | Hooks, scripts | Chat-driven | Manual |
+| **Integration** | CLI-native | IDE-native | Copy/paste |
+| **Best for** | Terminal workflows | Interactive coding | Any tool |
+| **Learning curve** | Low | Low | Lowest |
 
 **All tools can reference the same prompt modules from this repository.**
 
@@ -140,8 +168,7 @@ Based on typical development workflows:
 Pick the AI tool you use:
 - **Claude Code**: Official CLI from Anthropic
 - **Cursor**: AI-powered IDE
-- **Windsurf**: AI-powered IDE (experimental)
-- **Generic**: VS Code, PyCharm, etc. (manual integration)
+- **Generic**: VS Code, PyCharm, Vim, etc. (manual integration)
 
 ### 2. Run Setup Template
 
@@ -207,10 +234,10 @@ Workflow templates work with:
 
 - ✅ **Claude Code** (CLI) - Full integration
 - ✅ **Cursor** (IDE) - Full integration
-- ⚠️ **Windsurf** (IDE) - Experimental (use generic-ide.md)
 - ⚠️ **VS Code** - Manual integration (use generic-ide.md)
 - ⚠️ **PyCharm** - Manual integration (use generic-ide.md)
-- ⚠️ **Any tool** - Manual copy/paste workflow
+- ⚠️ **Vim/Neovim** - Manual integration (use generic-ide.md)
+- ⚠️ **Any AI tool** - Manual copy/paste workflow
 
 ---
 
@@ -265,6 +292,34 @@ Improvements to workflow templates are welcome:
 - **Shell scripts**: `shell/`
 - **Just scripts**: `just/`
 - **SQLAlchemy models**: `sqlalchemy/`
+
+---
+
+## Validation
+
+### Meta-Module Validation
+
+This module follows **meta-module validation criteria**, NOT content module criteria.
+
+**Validation guide**: See `META_MODULE_VALIDATION_GUIDE.md`
+
+**What is validated**:
+- ✅ All `@module/` references are correct and files exist
+- ✅ README clearly explains meta-module nature
+- ✅ Setup workflows create correct configuration files
+- ✅ Task workflows correctly compose content modules
+- ✅ Integration instructions are accurate and testable
+
+**What is NOT validated** (not applicable to meta-modules):
+- ❌ Presence of `*_Instructions.md` files (content modules only)
+- ❌ Preferences system (content modules only)
+- ❌ Working code examples (content modules only)
+- ❌ Compliance with `IDEAL_MODULE_TEMPLATE.md` (content modules only)
+
+**When using automated validation** (brutal-code-critic, quality-control-validator):
+- Always specify this is a meta-module
+- Use validation criteria from `META_MODULE_VALIDATION_GUIDE.md`
+- Do not apply content module validation rules
 
 ---
 
